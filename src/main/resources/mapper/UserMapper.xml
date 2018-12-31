@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.sign.jacky.dao.UserMapper">
+    <resultMap id="BaseResultMap" type="com.sign.jacky.entity.User">
+        <id column="user_id" jdbcType="VARCHAR" property="userId" />
+        <result column="phone_num" jdbcType="VARCHAR" property="phoneNum" />
+        <result column="pwd" jdbcType="VARCHAR" property="pwd" />
+        <result column="all_id" jdbcType="INTEGER" property="allId" />
+        <result column="position" jdbcType="INTEGER" property="position" />
+        <result column="image" jdbcType="VARCHAR" property="image" />
+        <result column="code" jdbcType="VARCHAR" property="code" />
+        <result column="state" jdbcType="INTEGER" property="state" />
+    </resultMap>
+    <insert id="insert" parameterType="com.sign.jacky.entity.User">
+        insert into user (user_id, phone_num, pwd,
+                          all_id, position, image, code,
+                          state)
+        values (#{userId,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR},
+                #{allId,jdbcType=INTEGER}, #{position,jdbcType=INTEGER}, #{image,jdbcType=VARCHAR},
+                #{code,jdbcType=VARCHAR},#{state,jdbcType=INTEGER})
+    </insert>
+
+    <select id="login" parameterType="String"
+            resultMap="BaseResultMap">
+        select *
+        from user
+        where phone_num = #{phoneNum} and pwd = #{password}
+    </select>
+
+    <update id="smsActive" parameterType="String">
+        update user
+        set state = 1
+        where code = #{code} and phone_num = #{phoneNum}
+    </update>
+    <update id="setPositionAndUUID">
+        update user
+        set all_id=#{uuid},
+            position=#{user_type}
+        where user_id=#{uid}
+    </update>
+    <select id="isRepeatRegister" parameterType="String"
+        resultType="String">
+        select phone_num
+        from user
+        where phone_num = #{phoneNum}
+    </select>
+    <select id="getSchoolId" parameterType="String"
+        resultType="int">
+        select school_id
+        from university
+        where school_name = #{school}
+    </select>
+    <select id="getAllIdByUid" parameterType="String"
+        resultType="Integer">
+        select all_id
+        from user
+        where user_id = #{uid}
+    </select>
+</mapper>

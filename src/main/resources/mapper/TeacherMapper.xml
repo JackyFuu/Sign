@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.sign.jacky.dao.TeacherMapper">
+    <resultMap id="teacherDetail" type="map">
+        <result column="teacher_name" property="name"/>
+        <result column="teacher_num" property="id"/>
+        <result column="teacher_sex" property="gender"/>
+        <result column="school_name" property="school"/>
+    </resultMap>
+    <select id="getTid" resultType="Integer">
+        select teacher_id
+        from teacher
+        where teacher_num=#{id} and teacher_pass=#{password} and school_id=#{schoolId}
+    </select>
+
+    <select id="getTeacherDetail" parameterType="int" resultMap="teacherDetail">
+        select teacher_name, teacher_num, teacher_sex, school_name
+        from teacher t, university u
+        where teacher_id = #{allId} and t.school_id = u.school_id
+    </select>
+</mapper>
