@@ -60,4 +60,9 @@
         from user
         where user_id = #{uid}
     </select>
+    <update id="updatePhoneNumberByUid" parameterType="String">
+        update user
+        set  phone_num = #{newPhoneNumber}
+        where user_id = #{uid}
+    </update>
 </mapper>

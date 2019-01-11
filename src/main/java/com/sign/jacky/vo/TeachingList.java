@@ -1,9 +1,13 @@
-package com.sign.jacky.entity;
+package com.sign.jacky.vo;
 
-public class Teaching {
-    private Integer teachingId;
+public class TeachingList {
+    private String teacherNum;
 
     private Integer teachingTaskId;
+
+    private String courseName;
+
+    private String courseImage;
 
     private String weekTime;
 
@@ -15,12 +19,12 @@ public class Teaching {
 
     private String teachingPlace;
 
-    public Integer getTeachingId() {
-        return teachingId;
+    public String getTeacherNum() {
+        return teacherNum;
     }
 
-    public void setTeachingId(Integer teachingId) {
-        this.teachingId = teachingId;
+    public void setTeacherNum(String teacherNum) {
+        this.teacherNum = teacherNum;
     }
 
     public Integer getTeachingTaskId() {
@@ -31,12 +35,28 @@ public class Teaching {
         this.teachingTaskId = teachingTaskId;
     }
 
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getCourseImage() {
+        return courseImage;
+    }
+
+    public void setCourseImage(String courseImage) {
+        this.courseImage = courseImage;
+    }
+
     public String getWeekTime() {
         return weekTime;
     }
 
     public void setWeekTime(String weekTime) {
-        this.weekTime = weekTime == null ? null : weekTime.trim();
+        this.weekTime = weekTime;
     }
 
     public Integer getClassTime() {
@@ -68,6 +88,8 @@ public class Teaching {
     }
 
     public void setTeachingPlace(String teachingPlace) {
-        this.teachingPlace = teachingPlace == null ? null : teachingPlace.trim();
+        this.teachingPlace = teachingPlace;
     }
+
+
 }

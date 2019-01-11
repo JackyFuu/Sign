@@ -21,4 +21,8 @@ public interface UserService {
     Map<String,String> getUserDetail(int allId, int userType);
 
     Integer getAllId(String uid);
+
+    Boolean changeIcon(String uid);
+
+    Boolean changePhoneNumber(String uid, String newPhoneNumber);
 }

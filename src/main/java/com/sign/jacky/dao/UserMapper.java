@@ -23,4 +23,7 @@ public interface UserMapper {
     int getSchoolId(String school);
 
     Integer getAllIdByUid(String uid);
+
+    int updatePhoneNumberByUid(@Param("uid") String uid,
+                               @Param("newPhoneNumber") String newPhoneNumber);
 }

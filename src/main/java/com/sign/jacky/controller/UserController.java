@@ -18,6 +18,13 @@ import java.util.Map;
 
 /**
  * 模块号：410000
+ * 1、用户注册   410010
+ * 2、用户激活   410020
+ * 3、用户登录   410030
+ * 4、用户认证   410040
+ * 5、修改头像   410050
+ * 6、修改手机号  410060
+ * 7、
  */
 
 @Controller
@@ -37,8 +44,8 @@ public class UserController {
         
         //判断手机号是否已注册
         Boolean isRepeatRegister = userService.isRepeatRegister(phoneNum);
+        JSONObject jsonObject = new JSONObject();
         if (isRepeatRegister){
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("code","410022");
             jsonObject.put("msg","重复手机号");
             return jsonObject.toJSONString();
@@ -69,12 +76,10 @@ public class UserController {
         //是否注册成功
         if(isRegisterSuccess){
             //SMSUtils.sendSMS(phoneNumber,code);
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("code","410010");
             jsonObject.put("msg","注册短信已发送");
             return jsonObject.toJSONString();
         } else {
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("code","410011");
             jsonObject.put("msg","用户注册失败");
             return jsonObject.toJSONString();
@@ -91,13 +96,12 @@ public class UserController {
         String code = map.get("code");
         String phone_number =  map.get("phone_number");
         boolean isActiveSuccess = userService.smsActive(code,phone_number);
+        JSONObject jsonObject = new JSONObject();
         if (isActiveSuccess){
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("code","410020");
             jsonObject.put("msg","用户注册成功");
             return jsonObject.toJSONString();
         } else {
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("code","410021");
             jsonObject.put("msg","用户注册失败");
             return jsonObject.toJSONString();
@@ -117,11 +121,11 @@ public class UserController {
         System.out.println(phoneNum);
         System.out.println(password);
         User user = userService.login(phoneNum, password);
-        
-        
+
+        JSONObject jsonObject = new JSONObject();
         if(user!=null && user.getState()==1){
             //返回用户信息，要使用@ResponseBody将返回值转换为JSON
-            JSONObject jsonObject = new JSONObject();
+
             //添加用户信息：
             /**
              * uid           //uid
@@ -157,7 +161,6 @@ public class UserController {
                 return jsonObject.toJSONString();
             }
         } else {
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("code","410031");
             jsonObject.put("msg","登录失败");
             
@@ -184,8 +187,8 @@ public class UserController {
         int schoolId = userService.getSchoolId(school); //获取学校id
         System.out.println("identify:"+uid+" " + ID + " "+ userType + " " + school + " " + password);
         boolean isIdentifySuccess = userService.identifyUser(uid,ID,password,userType,schoolId);
+        JSONObject jsonObject = new JSONObject();
         if(isIdentifySuccess){
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("code","410040");
             jsonObject.put("msg","用户认证成功");
             /**
@@ -205,7 +208,6 @@ public class UserController {
             
             return jsonObject.toJSONString();
         } else {
-            JSONObject jsonObject = new JSONObject();
             jsonObject.put("code","410041");
             jsonObject.put("msg","用户认证失败");
             return jsonObject.toJSONString();
@@ -213,30 +215,44 @@ public class UserController {
     }
 
     /**
-     * 修改头像
+     * 修改头像 410050
+     * @param map
+     * @return
      */
+    @RequestMapping(value = "/changeIcon")
+    public @ResponseBody String changeIcon(@RequestBody Map<String,String> map){
+        String uid = map.get("uid");
+        Boolean isChangeIconSuccess = userService.changeIcon(uid);
+        if(isChangeIconSuccess){
+            return null;
+        } else {
+            return null;
+        }
+    }
 
     /**
-     * 修改手机号
+     * 修改手机号  410060 修改手机号成功  410061 修改手机号失败
+     * @param map
+     * @return
      */
-//    /**
-//     * 获得用户个人资料 410050 获得用户个人资料   410051
-//     * 
-//     * 传入参数
-//     * uid
-//     * 
-//     * @return
-//     */
-//    @RequestMapping(value = "/personalDetail")
-//    public String getPersonalDetail(@RequestBody Map<String,String> map){
-//        String uid = map.get("uid");
-//        String userType = map.get("user_type");
-//        UserDetail userDetail = userService.getUserDetail(uid,userType);  //头像地址
-//        
-//        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("code","410050");
-//        jsonObject.put("msg","获得用户个人资料");
-//        return jsonObject.toJSONString();
-//    }
-    
+    @RequestMapping(value = "/changePhoneNumber")
+    public @ResponseBody String changePhoneNumber(@RequestBody Map<String,String> map){
+        String uid = map.get("uid");
+        String newPhoneNumber = map.get("new_phone_number");
+        Boolean isChangePhoneNumberSuccess = userService.changePhoneNumber(uid, newPhoneNumber);
+        JSONObject jsonObject = new JSONObject();
+        if(isChangePhoneNumberSuccess){
+            jsonObject.put("code","410060");
+            jsonObject.put("phone_number",newPhoneNumber);
+            jsonObject.put("msg","修改手机号成功");
+
+            return jsonObject.toJSONString();
+        } else {
+            jsonObject.put("code","410061");
+            jsonObject.put("msg","修改手机号失败");
+
+            return jsonObject.toJSONString();
+        }
+    }
+
 }

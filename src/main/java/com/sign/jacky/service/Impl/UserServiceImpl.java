@@ -102,22 +102,16 @@ public class UserServiceImpl implements UserService {
         return userMapper.getAllIdByUid(uid);
     }
 
-//    @Override
-//    public UserDetail getUserDetail(String uid, String userType) {
-//        
-//        UserDetail userDetail = new UserDetail();
-//        Map<String, String> map1 = userMapper.getUserDetail(uid);  
-//        //性别，学号，学校，
-//        
-//        //private String image;   //头像地址   user
-//        //userDetail.setImage();
-////        private String name;   //姓名   student/teacher/...
-////        private Integer gender;  //性别  student/teacher/...
-////        private Integer position; //  身份（学生，老师，辅导员）
-//        userDetail.setPosition(Integer.valueOf(userType));
-////        private Integer allId;    //学号/功耗  student
-//        userDetail.setAllId();
-////        private University university; //学号  student
-//        return null;
-//    }
+    @Override
+    public Boolean changeIcon(String uid) {
+        return null;
+    }
+
+    @Override
+    public Boolean changePhoneNumber(String uid, String newPhoneNumber) {
+        int row = userMapper.updatePhoneNumberByUid(uid,newPhoneNumber);
+        return row>0;
+    }
+
+
 }
