@@ -35,7 +35,7 @@
     </select>
     <select id="getTeachingListByTeacherNum" resultMap="teachingList">
         select *
-        from teachingList
+        from teaching_list
         where teacher_num = #{teacherNum}
     </select>
     <insert id="startSign" parameterType="com.sign.jacky.entity.StartSign">

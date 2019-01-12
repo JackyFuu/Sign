@@ -11,6 +11,18 @@
         <result column="student_sex" property="gender"/>
         <result column="school_name" property="school"/>
     </resultMap>
+    <resultMap id="courseList" type="com.sign.jacky.vo.CourseList">
+        <result column="student_num" property="studentNum"/>
+        <result column="teaching_task_id" property="teachingTaskId"/>
+        <result column="teacher_name" property="teacherName"/>
+        <result column="course_name" property="courseName"/>
+        <result column="course_image" property="courseImage"/>
+        <result column="week_time" property="weekTime"/>
+        <result column="class_time" property="classTime"/>
+        <result column="start_time" property="startTime"/>
+        <result column="course_length" property="courseLength"/>
+        <result column="teaching_place" property="teachingPlace"/>
+    </resultMap>
     <select id="getSid" resultType="Integer">
         select student_id
         from student
@@ -21,5 +33,10 @@
         select student_name, student_num, student_sex, school_name
         from student s, university u
         where student_id = #{allId} and s.school_id = u.school_id
+    </select>
+    <select id="getCourseListByStudentNum" resultMap="courseList">
+        select *
+        from course_list
+        where student_num = #{studentNum}
     </select>
 </mapper>
