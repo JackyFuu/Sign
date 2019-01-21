@@ -23,6 +23,13 @@
         <result column="course_length" property="courseLength"/>
         <result column="teaching_place" property="teachingPlace"/>
     </resultMap>
+    <resultMap id="startSignDetail" type="com.sign.jacky.entity.StartSign">
+        <result column="start_sign_id" property="startSignId"/>
+        <result column="teaching_task_id" property="teachingTaskId"/>
+        <result column="sponsor_time" property="sponsorTime"/>
+        <result column="route_seq" property="routeSeq"/>
+
+    </resultMap>
     <select id="getSid" resultType="Integer">
         select student_id
         from student
@@ -39,4 +46,27 @@
         from course_list
         where student_num = #{studentNum}
     </select>
+    <select id="getSidByStudentNumAndSchoolId" resultType="Integer">
+        select student_id
+        from student
+        where student_num = #{studentNum} and school_id = #{schoolId}
+    </select>
+    <select id="getTeachingTaskIdListBySid" resultType="Object">
+        select teaching_task_id
+        from select_course
+        where student_id = #{studentId}
+    </select>
+    <select id="getNewestStartSignByTeachingTaskId"
+        resultMap="startSignDetail">
+        select *
+        from start_sign
+        where teaching_task_id = #{teachingTaskId}
+        order by sponsor_time DESC
+        limit 0, 1
+    </select>
+    <insert id="insertSignInfoBySignIn" parameterType="com.sign.jacky.entity.SignIn">
+        insert into sign_in(student_id, teaching_task_id, start_sign_id, sign_in_time, re_sign, state)
+        values(#{signIn.studentId},#{signIn.teachingTaskId},
+          #{signIn.startSignId}, #{signIn.signInTime},#{signIn.reSign},#{signIn.state})
+    </insert>
 </mapper>

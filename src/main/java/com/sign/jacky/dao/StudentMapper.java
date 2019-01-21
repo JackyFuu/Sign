@@ -1,5 +1,7 @@
 package com.sign.jacky.dao;
 
+import com.sign.jacky.entity.SignIn;
+import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.vo.CourseList;
 import org.apache.ibatis.annotations.Param;
 
@@ -13,5 +15,14 @@ public interface StudentMapper {
 
     Map<String,String> getStudentDetail(int allId);
 
-    List<CourseList> getCourseListByStudentNum(BigInteger studentNum);
+    List<CourseList> getCourseListByStudentNum(String studentNum);
+
+    Integer getSidByStudentNumAndSchoolId(@Param("studentNum") String studentNum,
+                                      @Param("schoolId") Integer schoolId);
+
+    List<Integer> getTeachingTaskIdListBySid(int studentId);
+
+    StartSign getNewestStartSignByTeachingTaskId(Integer teachingTaskId);
+
+    void insertSignInfoBySignIn(@Param("signIn") SignIn signIn);
 }

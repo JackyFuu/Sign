@@ -75,7 +75,7 @@ public class UserController {
         boolean isRegisterSuccess = userService.register(user);
         //是否注册成功
         if(isRegisterSuccess){
-            //SMSUtils.sendSMS(phoneNumber,code);
+            //SMSUtils.sendSMS(phoneNum,code);
             jsonObject.put("code","410010");
             jsonObject.put("msg","注册短信已发送");
             return jsonObject.toJSONString();

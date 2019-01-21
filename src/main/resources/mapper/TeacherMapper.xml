@@ -38,10 +38,17 @@
         from teaching_list
         where teacher_num = #{teacherNum}
     </select>
-    <insert id="startSign" parameterType="com.sign.jacky.entity.StartSign">
+    <insert id="startSign" parameterType="com.sign.jacky.entity.StartSign"
+        useGeneratedKeys="true" keyProperty="startSign.startSignId">
         insert into start_sign(teaching_task_id, sponsor_time, route_seq)
         value (
           #{startSign.teachingTaskId},#{startSign.sponsorTime},#{startSign.routeSeq}
         )
     </insert>
+    <select id="getStudentIdListByTeachingTaskId"
+        resultType="Integer">
+        select student_id
+        from select_course
+        where teaching_task_id = #{teachingTaskId}
+    </select>
 </mapper>

@@ -14,5 +14,7 @@ public interface TeacherMapper {
 
     List<TeachingList> getTeachingListByTeacherNum(@Param("teacherNum") int teacherNum);
 
-    int startSign(@Param("startSign") StartSign startSign);
+    void startSign(@Param("startSign") StartSign startSign);
+
+    List<Integer> getStudentIdListByTeachingTaskId(int teachingTaskId);
 }

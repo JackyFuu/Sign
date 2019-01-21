@@ -1,5 +1,6 @@
 package com.sign.jacky.entity;
 
+
 import java.util.Date;
 
 public class SignIn {
@@ -7,13 +8,15 @@ public class SignIn {
 
     private Integer studentId;
 
-    private Integer courseId;
+    private Integer teachingTaskId;
 
     private Integer startSignId;
 
     private Date signInTime;
 
     private Integer reSign;
+
+    private Integer state; //1 已签到； 0 未签到
 
     public Integer getSignInId() {
         return signInId;
@@ -31,12 +34,12 @@ public class SignIn {
         this.studentId = studentId;
     }
 
-    public Integer getCourseId() {
-        return courseId;
+    public Integer getTeachingTaskId() {
+        return teachingTaskId;
     }
 
-    public void setCourseId(Integer courseId) {
-        this.courseId = courseId;
+    public void setTeachingTaskId(Integer teachingTaskId) {
+        this.teachingTaskId = teachingTaskId;
     }
 
     public Integer getStartSignId() {
@@ -61,5 +64,13 @@ public class SignIn {
 
     public void setReSign(Integer reSign) {
         this.reSign = reSign;
+    }
+
+    public Integer getState() {
+        return state;
+    }
+
+    public void setState(Integer state) {
+        this.state = state;
     }
 }

@@ -2,8 +2,13 @@ package com.sign.jacky.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.sign.jacky.entity.SignIn;
+import com.sign.jacky.entity.StartSign;
+import com.sign.jacky.service.BaseService;
 import com.sign.jacky.service.StudentService;
 import com.sign.jacky.vo.CourseList;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +33,13 @@ import java.util.Map;
 @RequestMapping("/student")
 @Controller
 public class StudentController {
+
+    private static final Logger logger = LogManager.getLogger("StudentController");
     @Autowired
     StudentService studentService;
+
+    @Autowired
+    BaseService baseService;
 
     /**
      * 430010
@@ -38,9 +50,8 @@ public class StudentController {
     @RequestMapping(value = "/checkClassSchedule")
     public @ResponseBody String checkClassSchedule(@RequestBody Map<String,String> map){
         String studentNum = map.get("student_num");
-        BigInteger studentNum1 = new BigInteger(studentNum);
-        System.out.println("studentNum1: "+ studentNum1 + "正在查看他的上课表...");
-        List<CourseList> courseList = studentService.getCourseList(studentNum1);
+        System.out.println("studentNum1: "+ studentNum + "正在查看他的上课表...");
+        List<CourseList> courseList = studentService.getCourseList(studentNum);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code","430010");
         jsonObject.put("msg","获取课程表成功");
@@ -56,12 +67,94 @@ public class StudentController {
      */
     @RequestMapping(value = "/sign")
     public @ResponseBody String sign(@RequestBody Map<String,String> map){
-        String studentNum = map.get("student_num"); //学号
-        String teachingTaskId = map.get("teaching_task_id"); //课程任务号
-        String routeSeq = map.get("route_seq"); //路由器序列号
-        return null;
+        String studentNum = map.get("student_num");
+        Integer teachingTaskId = Integer.valueOf(map.get("teaching_task_id")); //课程任务号
+        Integer routeSeq = Integer.valueOf(map.get("route_seq")); //路由器序列号
+        Integer startSignId = Integer.valueOf(map.get("start_sign_id")); //start_sign_id
+
+        logger.info("studentNum: "+ studentNum + "正在签到，teachingTaskId: " + teachingTaskId +
+                "routeSeq: "+ routeSeq + "startSignId: " + startSignId);
+
+        JSONObject jsonObject = new JSONObject(); //回写签到数据
+        int teacherRouteSeq = 0;
+        Calendar addOneMinutes = null;
+        StartSign startSignItem = baseService.getStartSignItem(startSignId); //得到老师发起签到的Item
+        if (startSignItem != null){
+            teacherRouteSeq = Integer.parseInt(startSignItem.getRouteSeq()); //老师发起签到的路由器序列
+            addOneMinutes = Calendar.getInstance();
+            addOneMinutes.setTime(startSignItem.getSponsorTime());
+            addOneMinutes.add(Calendar.MINUTE, 1);  //老师发起签到时间加1分钟
+
+            Date SignInTime = new Date(); //学生开始签到时间
+
+            SignIn signIn = new SignIn();
+            //如果学生签到时间在老师发起签到后的一分钟之内，并且路由器序列相等，则可以签到
+            if(SignInTime.before(addOneMinutes.getTime()) && ( teacherRouteSeq == routeSeq)){
+                //private Integer signInId
+                signIn.setSignInId(null); //无需封装，为null即可
+                //private Integer studentId;
+                //signIn.setStudentId();
+                //private Integer teachingTaskId;
+                //signIn.setTeachingTaskId(teachingTaskId);
+                //private Integer startSignId;
+                //signIn.setStartSignId(startSignId);
+                //private Date signInTime;
+                signIn.setSignInTime(SignInTime);
+                //private Integer reSign;
+                signIn.setReSign(0); //非补签
+                Boolean isSignInSuccess = studentService.sign(signIn);
+                if (isSignInSuccess){
+                    jsonObject.put("code","430020");
+                    jsonObject.put("msg","签到成功");
+                    return jsonObject.toJSONString();
+                } else {
+                    jsonObject.put("code","430021");
+                    jsonObject.put("msg","签到失败");
+                    return jsonObject.toJSONString();
+                }
+            } else {
+                jsonObject.put("code","430021");
+                jsonObject.put("msg","签到失败");
+                return jsonObject.toJSONString();
+            }
+        } else {
+            jsonObject.put("code","430022");
+            jsonObject.put("msg","未知错误");
+            return jsonObject.toJSONString();
+        }
+
+
     }
 
+    /**
+     * 430030
+     * 获取签到要求 根据学生的学号，获取学生的签到teaching_task_id  start_sign_id
+     * 根据学号和学校名获取学生id,然后通过select_course表中获取teaching_task_id,
+     * 根据teaching_task_id在start_sign表中获取最近的一次发起签到记录，
+     * 得到该发起签到记录的start_sign_id，回传到学生端口
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/getSignRequest")
+    public @ResponseBody String getSignRequest(@RequestBody Map<String,String> map){
+        String studentNum = map.get("student_num"); //学号
+        Integer schoolId = Integer.valueOf(map.get("school_id")); //学校id
+
+        System.out.println("studentNum1: "+ studentNum + "正在获取他的签到请求...");
+        JSONObject jsonObject = new JSONObject(); //回写签到数据
+
+        StartSign startSign = studentService.getSignRequest(studentNum,schoolId);
+        if (startSign != null){
+            jsonObject.put("code","430030");
+            jsonObject.put("msg","获取签到请求成功");
+            jsonObject.put("data",startSign);
+            return jsonObject.toJSONString();
+        } else {
+            jsonObject.put("code","430031");
+            jsonObject.put("msg","没有签到请求");
+            return jsonObject.toJSONString();
+        }
+    }
     /**
      * 430030
      * 补签

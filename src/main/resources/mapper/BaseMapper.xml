@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.sign.jacky.dao.BaseMapper">
+    <resultMap id="startSignItem" type="com.sign.jacky.entity.StartSign">
+        <result column="start_sign_id" property="startSignId"/>
+        <result column="teaching_task_id" property="teachingTaskId"/>
+        <result column="sponsor_time" property="sponsorTime"/>
+        <result column="route_seq" property="routeSeq"/>
+    </resultMap>
+    <select id="getStartSignItem" resultMap="startSignItem">
+        select *
+        from start_sign
+        where start_sign_id = #{startSignId}
+    </select>
+    <insert id="signIn" parameterType="com.sign.jacky.entity.SignIn">
+        insert into sign_in(student_num, teaching_task_id,
+              start_sign_id, sign_in_time, re_sign)
+        value (#{signIn.studentNum}, #{signIn.teachingTaskId},
+          #{signIn.startSignId}, #{signIn.signInTime}, #{signIn.reSign})
+    </insert>
+</mapper>
