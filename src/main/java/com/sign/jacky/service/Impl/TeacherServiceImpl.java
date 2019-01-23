@@ -7,6 +7,7 @@ import com.sign.jacky.entity.SignIn;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.entity.Teaching;
 import com.sign.jacky.service.TeacherService;
+import com.sign.jacky.vo.SignInVo;
 import com.sign.jacky.vo.TeachingList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -56,5 +57,16 @@ public class TeacherServiceImpl implements TeacherService {
             studentMapper.insertSignInfoBySignIn(signIn);
         }
         return true;
+    }
+
+    @Override
+    public List<StartSign> getSumStartSignRecordAccordingTeachingTask(String teachingTaskId) {
+        return teacherMapper.getSumStartSignRecordByTeachingTaskId(teachingTaskId);
+    }
+
+    @Override
+    public List<SignInVo> getOnceStartSignRecord(String startSignId) {
+        return teacherMapper
+                .getOnceStartSignRecordByTeachingTaskIdAndStartSignId(startSignId);
     }
 }

@@ -24,7 +24,7 @@
         <result column="teaching_place" property="teachingPlace"/>
     </resultMap>
     <resultMap id="startSignDetail" type="com.sign.jacky.entity.StartSign">
-        <result column="start_sign_id" property="startSignId"/>
+        <id column="start_sign_id" property="startSignId"/>
         <result column="teaching_task_id" property="teachingTaskId"/>
         <result column="sponsor_time" property="sponsorTime"/>
         <result column="route_seq" property="routeSeq"/>

@@ -8,6 +8,8 @@ import com.sign.jacky.service.UserService;
 import com.sign.jacky.utils.CommonsUtils;
 import com.sign.jacky.utils.SMSUtils;
 import com.sign.jacky.vo.UserDetail;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +31,8 @@ import java.util.Map;
 
 @Controller
 public class UserController {
+
+    private static final Logger logger = LogManager.getLogger("UserController");
     
     @Autowired
     UserService userService;
@@ -118,8 +122,8 @@ public class UserController {
         //使用map.get方法得到JSON中id对应的值
         String phoneNum = map.get("phone_number");
         String password = map.get("password");
-        System.out.println(phoneNum);
-        System.out.println(password);
+
+        logger.info("phoneNum: "+ phoneNum + "password: " + password + " 正在登陆中...");
         User user = userService.login(phoneNum, password);
 
         JSONObject jsonObject = new JSONObject();

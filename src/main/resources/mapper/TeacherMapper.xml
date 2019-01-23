@@ -12,7 +12,7 @@
         <result column="school_name" property="school"/>
     </resultMap>
     <resultMap id="teachingList" type="com.sign.jacky.vo.TeachingList">
-        <result column="teacher_id" property="teacherId"/>
+        <id column="teacher_id" property="teacherId"/>
         <result column="teaching_task_id" property="teachingTaskId"/>
         <result column="course_name" property="courseName"/>
         <result column="course_image" property="courseImage"/>
@@ -22,6 +22,13 @@
         <result column="course_length" property="courseLength"/>
         <result column="teaching_place" property="teachingPlace"/>
     </resultMap>
+    <resultMap id="startSignDetail" type="com.sign.jacky.entity.StartSign">
+        <id column="start_sign_id" property="startSignId"/>
+        <result column="teaching_task_id" property="teachingTaskId"/>
+        <result column="sponsor_time" property="sponsorTime"/>
+        <result column="route_seq" property="routeSeq"/>
+    </resultMap>
+
     <select id="getTid" resultType="Integer">
         select teacher_id
         from teacher
@@ -50,5 +57,31 @@
         select student_id
         from select_course
         where teaching_task_id = #{teachingTaskId}
+    </select>
+    <select id="getSumStartSignRecordByTeachingTaskId"
+        resultMap="startSignDetail">
+        select *
+        from start_sign
+        where teaching_task_id = #{teachingTaskId}
+    </select>
+    <resultMap id="signInVoDetail" type="com.sign.jacky.vo.SignInVo">
+        <id column="sign_in_id" property="signInId"/>
+        <result column="teaching_task_id" property="teachingTaskId"/>
+        <result column="start_sign_id" property="startSignId"/>
+        <result column="sign_in_time" property="signInTime"/>
+        <result column="re_sign" property="reSign"/>
+        <result column="state" property="state"/>
+        <association property="student" javaType="com.sign.jacky.entity.Student">
+            <id column="student_id" property="studentId"/>
+            <result column="student_num" property="studentNum"/>
+            <result column="student_name" property="studentName"/>
+        </association>
+    </resultMap>
+    <select id="getOnceStartSignRecordByTeachingTaskIdAndStartSignId"
+        resultMap="signInVoDetail">
+        select si.*, s.student_id, s.student_num, s.student_name
+        from sign_in si ,student s
+        where start_sign_id = #{startSignId}
+          and si.student_id = s.student_id
     </select>
 </mapper>

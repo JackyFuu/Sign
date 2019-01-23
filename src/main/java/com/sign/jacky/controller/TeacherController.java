@@ -4,6 +4,7 @@ package com.sign.jacky.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.service.TeacherService;
+import com.sign.jacky.vo.SignInVo;
 import com.sign.jacky.vo.TeachingList;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
@@ -116,20 +117,37 @@ public class TeacherController {
     /**
      * 420050
      * 查看某门课程任务的总的签到记录
+     * 根据teaching_task_id查询start_sign表，查询该授课任务的发起签到记录。
+     *
      * @return
      */
-    @RequestMapping(value = "/getCourseSignRecord")
-    public @ResponseBody String getCourseSignRecord(@RequestBody Map<String,String> map){
+    @RequestMapping(value = "/getStartSignRecord")
+    public @ResponseBody String getStartSignRecord(@RequestBody Map<String,String> map){
         String teachingTaskId = map.get("teaching_task_id");
-        return null;
+        logger.info("查看授课任务：" + teachingTaskId + "的所有发起签到记录中...");
+        List<StartSign> startSignList = teacherService.
+                getSumStartSignRecordAccordingTeachingTask(teachingTaskId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code","420050");
+        jsonObject.put("msg","获取课程任务签到记录成功");
+        jsonObject.put("data",startSignList);
+        return jsonObject.toJSONString();
     }
     /**
      * 420060
-     * 查看某门课程任务的某次签到记录
+     * 查看某门课程任务的某次签到记录 根据start_sign_id查询某次发起签到的签到记录
      * @return
      */
     @RequestMapping(value = "/getSingleSignRecord")
     public @ResponseBody String getSingleSignRecord(@RequestBody Map<String,String> map){
-        return null;
+        //String teachingTaskId = map.get("teaching_task_id");
+        String startSignId = map.get("start_sign_id");
+        logger.info("查看签到编号为："+ startSignId + " 的所有学生签到记录中...");
+        List<SignInVo> signInList = teacherService.getOnceStartSignRecord(startSignId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code","420060");
+        jsonObject.put("msg","查看某门课程任务的某次签到记录成功");
+        jsonObject.put("data",signInList);
+        return jsonObject.toJSONString();
     }
 }

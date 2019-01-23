@@ -1,6 +1,7 @@
 package com.sign.jacky.dao;
 
 import com.sign.jacky.entity.StartSign;
+import com.sign.jacky.vo.SignInVo;
 import com.sign.jacky.vo.TeachingList;
 import org.apache.ibatis.annotations.Param;
 
@@ -17,4 +18,9 @@ public interface TeacherMapper {
     void startSign(@Param("startSign") StartSign startSign);
 
     List<Integer> getStudentIdListByTeachingTaskId(int teachingTaskId);
+
+    List<StartSign> getSumStartSignRecordByTeachingTaskId(String teachingTaskId);
+
+    List<SignInVo> getOnceStartSignRecordByTeachingTaskIdAndStartSignId(
+            @Param("startSignId") String startSignId);
 }
