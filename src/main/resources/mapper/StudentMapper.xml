@@ -69,4 +69,9 @@
         values(#{signIn.studentId},#{signIn.teachingTaskId},
           #{signIn.startSignId}, #{signIn.signInTime},#{signIn.reSign},#{signIn.state})
     </insert>
+    <update id="signByStudentIdAndStartSignId" >
+        update sign_in
+        set sign_in_time = #{signInTime}, state = #{signState}
+        where student_id = #{studentId} and start_sign_id = #{startSignId}
+    </update>
 </mapper>

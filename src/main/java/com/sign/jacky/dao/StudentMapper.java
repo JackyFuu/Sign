@@ -5,7 +5,7 @@ import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.vo.CourseList;
 import org.apache.ibatis.annotations.Param;
 
-import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -17,12 +17,17 @@ public interface StudentMapper {
 
     List<CourseList> getCourseListByStudentNum(String studentNum);
 
-    Integer getSidByStudentNumAndSchoolId(@Param("studentNum") String studentNum,
-                                      @Param("schoolId") Integer schoolId);
+//    Integer getSidByStudentNumAndSchoolId(@Param("studentNum") String studentNum,
+//                                      @Param("schoolId") Integer schoolId);
 
     List<Integer> getTeachingTaskIdListBySid(int studentId);
 
     StartSign getNewestStartSignByTeachingTaskId(Integer teachingTaskId);
 
     void insertSignInfoBySignIn(@Param("signIn") SignIn signIn);
+
+    int signByStudentIdAndStartSignId(@Param("studentId") int studentId,
+                                      @Param("startSignId") Integer startSignId,
+                                      @Param("signInTime")Date signInTime,
+                                      @Param("signState") int signState);
 }

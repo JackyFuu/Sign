@@ -2,7 +2,7 @@ package com.sign.jacky.service.Impl;
 
 import com.sign.jacky.dao.BaseMapper;
 import com.sign.jacky.dao.StudentMapper;
-import com.sign.jacky.entity.SignIn;
+import com.sign.jacky.dao.UserMapper;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.vo.CourseList;
 import org.apache.log4j.LogManager;
@@ -22,6 +22,9 @@ public class StudentServiceImpl implements com.sign.jacky.service.StudentService
     StudentMapper studentMapper;
 
     @Autowired
+    UserMapper userMapper;
+
+    @Autowired
     BaseMapper baseMapper;
 
     @Override
@@ -29,10 +32,6 @@ public class StudentServiceImpl implements com.sign.jacky.service.StudentService
         return studentMapper.getCourseListByStudentNum(studentNum);
     }
 
-    @Override
-    public Boolean sign(SignIn signIn) {
-        return null;
-    }
 
 
     /**
@@ -41,14 +40,13 @@ public class StudentServiceImpl implements com.sign.jacky.service.StudentService
      * 如果这条记录在查询时的1分钟之内，则返回这条记录，
      * 如果没有找到，则返回startSign = null,
      * 得到该发起签到记录startSign，回传到学生端口
-     * @param studentNum 学号
-     * @param schoolId 学校名
+     * @param  userId user_id
      * @return StartSign
      */
     @Override
-    public StartSign getSignRequest(String studentNum, Integer schoolId) {
+    public StartSign getSignRequest(String userId) {
         //根据学号和学校名获取学生id
-        int studentId= studentMapper.getSidByStudentNumAndSchoolId(studentNum,schoolId);
+        int studentId = userMapper.getAllIdByUid(userId);
         //然后通过select_course表中获取teaching_task_id列表
         List<Integer> teachingTaskIdList = studentMapper.getTeachingTaskIdListBySid(studentId);
         //根据teaching_task_id在start_sign表中获取最近的一次发起签到记录
@@ -70,5 +68,14 @@ public class StudentServiceImpl implements com.sign.jacky.service.StudentService
         }
         //如果没有找到，则返回startSign = null
         return null;
+    }
+
+    @Override
+    public Boolean sign(String userId, Date signInTime, int signState, Integer startSignId) {
+        //根据学号和学校名获取学生id
+        int studentId = userMapper.getAllIdByUid(userId);
+        //更新签到记录的时间和状态
+        int row = studentMapper.signByStudentIdAndStartSignId(studentId, startSignId, signInTime, signState);
+        return row>0;
     }
 }

@@ -76,7 +76,18 @@
       <artifactId>fastjson</artifactId>
       <version>1.2.8</version>
     </dependency>
-
+    <!-- jpush 消息推送框架-->
+    <dependency>
+      <groupId>cn.jpush.api</groupId>
+      <artifactId>jpush-client</artifactId>
+      <version>3.3.9</version>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>4.1.6.Final</version>
+      <scope>compile</scope>
+    </dependency>
     <!-- Gson -->
     <dependency>
       <groupId>com.google.code.gson</groupId>
