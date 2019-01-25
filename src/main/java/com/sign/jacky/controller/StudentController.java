@@ -50,7 +50,7 @@ public class StudentController {
     @RequestMapping(value = "/checkClassSchedule")
     public @ResponseBody String checkClassSchedule(@RequestBody Map<String,String> map){
         String studentNum = map.get("student_num");
-        System.out.println("studentNum1: "+ studentNum + "正在查看他的上课表...");
+        logger.info("学号为："+ studentNum + "的同学正在查看他的上课表...");
         List<CourseList> courseList = studentService.getCourseList(studentNum);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code","430010");
@@ -129,7 +129,7 @@ public class StudentController {
     public @ResponseBody String getSignRequest(@RequestBody Map<String,String> map){
         String userId = map.get("user_id"); //uuid
 
-        System.out.println("studentNum1: "+ userId + "正在获取他的签到请求...");
+        logger.info("userId: "+ userId + "正在获取他的签到请求...");
         JSONObject jsonObject = new JSONObject(); //回写签到数据
 
         StartSign startSign = studentService.getSignRequest(userId);
@@ -144,15 +144,46 @@ public class StudentController {
             return jsonObject.toJSONString();
         }
     }
+
     /**
-     * 430030
-     * 补签
+     * 430040
+     * 根据学生uid_id和teachingTaskId获取获取该学生的所有签到记录
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/getOneTeachingTaskSignRecord")
+    public @ResponseBody String getOneTeachingTaskSignRecord(@RequestBody Map<String,String> map){
+        String userId = map.get("userId"); //uuid
+        String teachingTaskId = map.get("teachingTaskId");
+        logger.info("获取用户： "+ userId + "学生的上课任务："+teachingTaskId+ "所有签到记录成功");
+        List<SignIn> signInList = studentService.getOneTeachingTaskSignRecord(userId, teachingTaskId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code","430040");
+        jsonObject.put("msg","获取用户： "+ userId + "学生的上课任务："+teachingTaskId+ "所有签到记录成功");
+        jsonObject.put("data",signInList);
+        return jsonObject.toJSONString();
+    }
+    /**
+     * 430050
+     * 补签  补签需要在发起签到的10分钟内进行补签
      * @param map
      * @return
      */
     @RequestMapping(value = "/retroactive")
     public @ResponseBody String retroactive(@RequestBody Map<String,String> map){
-        return null;
+        String signInId = map.get("sign_in_id");
+        logger.info("正在补签签到编号为： "+ signInId + " 的签到记录中...");
+        Boolean isRetroactiveSuccess = studentService.retroactive(signInId);
+        JSONObject jsonObject = new JSONObject();
+        if (isRetroactiveSuccess){
+            jsonObject.put("code","430040");
+            jsonObject.put("msg","补签成功");
+            return jsonObject.toJSONString();
+        } else {
+            jsonObject.put("code","430040");
+            jsonObject.put("msg","补签失败");
+            return jsonObject.toJSONString();
+        }
     }
 
     /**

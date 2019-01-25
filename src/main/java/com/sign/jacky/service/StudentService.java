@@ -1,5 +1,6 @@
 package com.sign.jacky.service;
 
+import com.sign.jacky.entity.SignIn;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.vo.CourseList;
 
@@ -12,4 +13,10 @@ public interface StudentService {
     StartSign getSignRequest(String userId);
 
     Boolean sign(String userId, Date signInTime, int signState, Integer startSignId);
+
+    //List<SignIn> getAllSignRecord(String userId);
+
+    Boolean retroactive(String signInId);
+
+    List<SignIn> getOneTeachingTaskSignRecord(String userId, String teachingTaskId);
 }

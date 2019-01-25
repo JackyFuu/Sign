@@ -11,8 +11,8 @@
         <setting name="useGeneratedKeys" value="true"/>
         <!--使用列别名替换别名　　默认true-->
         <setting name="useColumnLabel" value="true"/>
-        <!--&lt;!&ndash;开启驼峰命名转换Table:create_time到 Entity(createTime)&ndash;&gt;-->
-        <!--<setting name="mapUnderscoreToCamelCase" value="true"/>-->
+        <!--开启驼峰命名转换Table:create_time到 Entity(createTime)-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
 
         <setting name="logImpl" value="LOG4J"/>
     </settings>

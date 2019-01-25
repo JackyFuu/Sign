@@ -3,10 +3,12 @@ package com.sign.jacky.service.Impl;
 
 import com.sign.jacky.dao.StudentMapper;
 import com.sign.jacky.dao.TeacherMapper;
+import com.sign.jacky.dao.UserMapper;
 import com.sign.jacky.entity.SignIn;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.entity.Teaching;
 import com.sign.jacky.service.TeacherService;
+import com.sign.jacky.utils.jPushUtils;
 import com.sign.jacky.vo.SignInVo;
 import com.sign.jacky.vo.TeachingList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +16,9 @@ import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class TeacherServiceImpl implements TeacherService {
@@ -23,6 +27,10 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Autowired
     StudentMapper studentMapper;
+
+    @Autowired
+    UserMapper userMapper;
+
     @Override
     public List<TeachingList> getTeachingList(int teacherNum) {
 
@@ -37,6 +45,16 @@ public class TeacherServiceImpl implements TeacherService {
         int teachingTaskId= startSign.getTeachingTaskId();
         //获取选了teachingTaskId的学生学号集合
         List<Integer>  studentIdList= teacherMapper.getStudentIdListByTeachingTaskId(teachingTaskId);
+
+        //List<String> studentNumList = studentMapper.getStudentNumListByStudentIdList(studentIdList);
+//        Map<String, String> param = new HashMap<>();
+//        //文章标题
+//        param.put("title", "签到任务");
+//        //设置提示信息,内容是文章标题
+//        param.put("msg", "同学，你有一条新的签到任务！");
+//        param.put("startSignId", String.valueOf(startSignId));
+//        jPushUtils.jPushAndroid(param, studentNumList);
+
         //将签到记录插入sign_in表
         for (int studentId: studentIdList) {
             SignIn signIn = new SignIn();

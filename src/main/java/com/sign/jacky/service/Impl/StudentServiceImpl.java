@@ -3,6 +3,7 @@ package com.sign.jacky.service.Impl;
 import com.sign.jacky.dao.BaseMapper;
 import com.sign.jacky.dao.StudentMapper;
 import com.sign.jacky.dao.UserMapper;
+import com.sign.jacky.entity.SignIn;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.vo.CourseList;
 import org.apache.log4j.LogManager;
@@ -72,10 +73,36 @@ public class StudentServiceImpl implements com.sign.jacky.service.StudentService
 
     @Override
     public Boolean sign(String userId, Date signInTime, int signState, Integer startSignId) {
-        //根据学号和学校名获取学生id
+        //根据userId获取学生id
         int studentId = userMapper.getAllIdByUid(userId);
         //更新签到记录的时间和状态
         int row = studentMapper.signByStudentIdAndStartSignId(studentId, startSignId, signInTime, signState);
         return row>0;
+    }
+
+    //@Override
+//    public List<SignIn> getAllSignRecord(String userId) {
+//        //根据userId获取学生id
+//        int studentId = userMapper.getAllIdByUid(userId);
+//        return studentMapper.getAllSignRecordByStudentId(studentId);
+//    }
+
+    /**
+     * 更新签到时间，设置补签标记为1，设置为已签到
+     * @param signInId
+     * @return
+     */
+    @Override
+    public Boolean retroactive(String signInId) {
+        Date newSignInTime = new Date();
+        int row = studentMapper.retroactiveByStartSignId(signInId,newSignInTime);
+        return row>0;
+    }
+
+    @Override
+    public List<SignIn> getOneTeachingTaskSignRecord(String userId, String teachingTaskId) {
+        //根据userId获取学生id
+        int studentId = userMapper.getAllIdByUid(userId);
+        return studentMapper.getOneTeachingTaskSignRecordByStudentIdAndTeachingTaskId(studentId, teachingTaskId);
     }
 }

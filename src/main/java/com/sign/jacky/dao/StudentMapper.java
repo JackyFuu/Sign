@@ -30,4 +30,15 @@ public interface StudentMapper {
                                       @Param("startSignId") Integer startSignId,
                                       @Param("signInTime")Date signInTime,
                                       @Param("signState") int signState);
+
+    //List<SignIn> getAllSignRecordByStudentId(int studentId);
+
+    int retroactiveByStartSignId(@Param("signInId") String signInId,
+                                 @Param("newSignInTime") Date newSignInTime);
+
+    List<SignIn> getOneTeachingTaskSignRecordByStudentIdAndTeachingTaskId(
+            @Param("studentId") int studentId,
+            @Param("teachingTaskId") String teachingTaskId);
+
+    List<String> getStudentNumListByStudentIdList(List<Integer> studentIdList);
 }

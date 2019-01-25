@@ -12,10 +12,13 @@
 //import cn.jpush.api.push.model.notification.IosAlert;
 //import cn.jpush.api.push.model.notification.IosNotification;
 //import cn.jpush.api.push.model.notification.Notification;
+//import com.sign.jacky.enums.PushType;
 //
 //import java.util.HashMap;
 //import java.util.List;
 //import java.util.Map;
+//
+//import static org.springframework.util.ObjectUtils.isEmpty;
 //
 //public class JPushService {
 //    private Boolean production = false;
@@ -46,15 +49,19 @@
 //        }
 //    }
 //
+//    public void sendNotificationByTag(String tag, String notificationTitle, String content) {
+//        sendNotificationByTag(tag, notificationTitle, content, new HashMap<>());
+//    }
+//
+//
+//
 //    public void sendNotificationByTags(List<String> tagList, String notificationTitle, String content, Map<String, String> extras) {
 //        for (String tag : tagList) {
 //            sendNotificationByTag(tag, notificationTitle, content, extras);
 //        }
 //    }
 //
-//    public void sendNotificationByTag(String tag, String notificationTitle, String content) {
-//        sendNotificationByTag(tag, notificationTitle, content, new HashMap<>());
-//    }
+//
 //
 //    public void sendNotificationByTag(String tag, String notificationTitle, String content, Map<String, String> extras) {
 //        sendNotification(Audience.tag(tag), notificationTitle, content, extras, PushType.Both);

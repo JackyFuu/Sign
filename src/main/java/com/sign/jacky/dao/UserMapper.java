@@ -4,6 +4,7 @@ package com.sign.jacky.dao;
 import com.sign.jacky.entity.User;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserMapper {
@@ -26,4 +27,12 @@ public interface UserMapper {
 
     int updatePhoneNumberByUid(@Param("uid") String uid,
                                @Param("newPhoneNumber") String newPhoneNumber);
+
+    int updatePasswordByUid( @Param("uid") String uid,
+                             @Param("oldPassword") String oldPassword,
+                             @Param("newPassword") String newPassword);
+
+    //List<String> getUserIdListByStudentIdList(List<Integer> studentIdList);
+
+
 }

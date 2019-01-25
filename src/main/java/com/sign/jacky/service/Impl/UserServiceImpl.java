@@ -1,17 +1,14 @@
 package com.sign.jacky.service.Impl;
 
-import com.sign.jacky.dao.InstructorMapper;
-import com.sign.jacky.dao.StudentMapper;
-import com.sign.jacky.dao.TeacherMapper;
-import com.sign.jacky.dao.UserMapper;
+import com.sign.jacky.dao.*;
+import com.sign.jacky.entity.University;
 import com.sign.jacky.entity.User;
 import com.sign.jacky.service.UserService;
-import com.sign.jacky.vo.UserDetail;
-import org.apache.ibatis.annotations.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -25,6 +22,9 @@ public class UserServiceImpl implements UserService {
     TeacherMapper teacherMapper;
     @Autowired
     InstructorMapper instructorMapper;
+
+    @Autowired
+    BaseMapper baseMapper;
     @Override
     public User login(String phoneNum, String password) {
         return userMapper.login(phoneNum, password);
@@ -111,6 +111,17 @@ public class UserServiceImpl implements UserService {
     public Boolean changePhoneNumber(String uid, String newPhoneNumber) {
         int row = userMapper.updatePhoneNumberByUid(uid,newPhoneNumber);
         return row>0;
+    }
+
+    @Override
+    public Boolean changePassword(String uid, String oldPassword, String newPassword) {
+        int row = userMapper.updatePasswordByUid(uid,oldPassword,newPassword);
+        return row>0;
+    }
+
+    @Override
+    public List<University> getSchoolInfo() {
+        return baseMapper.getSchoolInfo();
     }
 
 

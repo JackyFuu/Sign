@@ -65,4 +65,9 @@
         set  phone_num = #{newPhoneNumber}
         where user_id = #{uid}
     </update>
+    <update id="updatePasswordByUid" parameterType="String">
+        update user
+        set  pwd = #{newPassword}
+        where user_id = #{uid} and pwd = #{oldPassword}
+    </update>
 </mapper>

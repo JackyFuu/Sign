@@ -22,4 +22,8 @@
         value (#{signIn.studentNum}, #{signIn.teachingTaskId},
           #{signIn.startSignId}, #{signIn.signInTime}, #{signIn.reSign})
     </insert>
+    <select id="getSchoolInfo" resultType="com.sign.jacky.entity.University">
+        select *
+        from university
+    </select>
 </mapper>

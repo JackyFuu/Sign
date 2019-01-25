@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -184,12 +185,16 @@ public class UserController {
     public @ResponseBody String identify(@RequestBody Map<String,String> map){
         String uid = map.get("uid");
         // user_type:  1学生  2辅导员  3教师
-        String userType = map.get("user_type");
+        String userType = map.get("userType");
         String ID = map.get("ID");  //学号等等
         String password = map.get("password");
-        String school = map.get("school");
-        int schoolId = userService.getSchoolId(school); //获取学校id
-        System.out.println("identify:"+uid+" " + ID + " "+ userType + " " + school + " " + password);
+        Integer schoolId = Integer.valueOf(map.get("schoolId"));
+        //String school = map.get("school");
+        //int schoolId = userService.getSchoolId(school); //获取学校id
+
+        logger.info("uid:"+uid+" 正在认证中... ID为：" + ID + "用户类型为："+
+                userType + "学校id为：" + schoolId + "教务系统密码为： " + password);
+
         boolean isIdentifySuccess = userService.identifyUser(uid,ID,password,userType,schoolId);
         JSONObject jsonObject = new JSONObject();
         if(isIdentifySuccess){
@@ -257,6 +262,45 @@ public class UserController {
 
             return jsonObject.toJSONString();
         }
+    }
+
+    /**
+     * 修改密码  410070 修改密码成功  410071 修改密码失败
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/changePassword")
+    public @ResponseBody String changePassword(@RequestBody Map<String,String> map){
+        String uid = map.get("uid");
+        String oldPassword = map.get("oldPassword");
+        String newPassword = map.get("newPassword");
+        logger.info("uid: "+ uid + " 正在修改登录密码中... 旧密码为："+ oldPassword +"新密码为："+ newPassword);
+        Boolean isChangePhoneNumberSuccess = userService.changePassword(uid, oldPassword,newPassword);
+        JSONObject jsonObject = new JSONObject();
+        if(isChangePhoneNumberSuccess){
+            jsonObject.put("code","410070");
+            jsonObject.put("msg","修改密码成功");
+            return jsonObject.toJSONString();
+        } else {
+            jsonObject.put("code","410071");
+            jsonObject.put("msg","修改密码失败");
+            return jsonObject.toJSONString();
+        }
+    }
+
+    /**
+     * 410080 获取所有学校信息   没有入参的情况下不需要接收参数
+     * @return
+     */
+    @RequestMapping(value = "/getSchoolInfo")
+    public @ResponseBody String getSchoolInfo(){
+        logger.info(" 获取学校信息中...");
+        List<University> universityList= userService.getSchoolInfo();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code","410080");
+        jsonObject.put("msg","获取所有学校信息成功");
+        jsonObject.put("data",universityList);
+        return jsonObject.toJSONString();
     }
 
 }

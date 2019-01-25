@@ -74,4 +74,35 @@
         set sign_in_time = #{signInTime}, state = #{signState}
         where student_id = #{studentId} and start_sign_id = #{startSignId}
     </update>
+    <resultMap id="signInDetail" type="com.sign.jacky.entity.SignIn">
+        <id column="sign_in_id" property="signInId"/>
+        <result column="student_id" property="studentId"/>
+        <result column="teaching_task_id" property="teachingTaskId"/>
+        <result column="start_sign_id" property="startSignId"/>
+        <result column="sign_in_time" property="signInTime"/>
+        <result column="re_sign" property="reSign"/>
+        <result column="state" property="state"/>
+    </resultMap>
+    <select id="getOneTeachingTaskSignRecordByStudentIdAndTeachingTaskId"
+        resultMap="signInDetail">
+        select *
+        from sign_in
+        where student_id = #{studentId} and teaching_task_id = #{teachingTaskId}
+    </select>
+    <update id="retroactiveByStartSignId">
+        update sign_in
+        set sign_in_time = #{newSignInTime},
+            re_sign = 1,
+            state = 1
+        where sign_in_id = #{signInId}
+    </update>
+    <select id="getStudentNumListByStudentIdList" resultType="String">
+        select student_num
+        from student
+        where student_id in
+        <foreach item="item" index="index" collection="list"
+                 open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 </mapper>

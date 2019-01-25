@@ -1,8 +1,9 @@
 package com.sign.jacky.service;
 
+import com.sign.jacky.entity.University;
 import com.sign.jacky.entity.User;
-import com.sign.jacky.vo.UserDetail;
 
+import java.util.List;
 import java.util.Map;
 
 public interface UserService {
@@ -25,4 +26,8 @@ public interface UserService {
     Boolean changeIcon(String uid);
 
     Boolean changePhoneNumber(String uid, String newPhoneNumber);
+
+    Boolean changePassword(String uid, String oldPassword, String newPassword);
+
+    List<University> getSchoolInfo();
 }
