@@ -48,11 +48,11 @@ public class TeacherController {
      */
     @RequestMapping(value = "/getTeachingList")
     public @ResponseBody  String getTeachingList(@RequestBody Map<String,String> map){
-        String teacherNum = map.get("teacher_num");
+        String teacherNum = map.get("teacherNum");
         logger.info("teacherId: "+Integer.parseInt(teacherNum) + "正在查看他的授课表...");
         List<TeachingList> teachingList = teacherService.getTeachingList(Integer.parseInt(teacherNum));
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code","420010");
+        jsonObject.put("code","200");
         jsonObject.put("msg","获取授课表成功");
         jsonObject.put("data",teachingList);
         return jsonObject.toJSONString();
@@ -64,8 +64,8 @@ public class TeacherController {
      */
     @RequestMapping(value = "/startSign")
     public @ResponseBody String startSign(@RequestBody Map<String,String> map){
-        String teachingTaskId = map.get("teaching_task_id");
-        String routeSeq = map.get("routes_seq"); //默认=123456
+        String teachingTaskId = map.get("teachingTaskId");
+        String routeSeq = map.get("routeSeq"); //默认=123456
         logger.info("teachingTaskId: " + teachingTaskId + "发起签到中..."+",routeSeq= "+routeSeq);
         StartSign startSign = new StartSign();
         //private Integer startSignId;
@@ -84,12 +84,14 @@ public class TeacherController {
         Boolean isSuccessStartSign = teacherService.startSign(startSign);
         JSONObject jsonObject = new JSONObject();
         if (isSuccessStartSign){
-            jsonObject.put("code","420020");
+            jsonObject.put("code","200");
             jsonObject.put("msg","发起签到成功");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         } else {
             jsonObject.put("code","420021");
             jsonObject.put("msg","发起签到失败");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         }
     }
@@ -123,13 +125,13 @@ public class TeacherController {
      */
     @RequestMapping(value = "/getStartSignRecord")
     public @ResponseBody String getStartSignRecord(@RequestBody Map<String,String> map){
-        String teachingTaskId = map.get("teaching_task_id");
+        String teachingTaskId = map.get("teachingTaskId");
         logger.info("查看授课任务：" + teachingTaskId + "的所有发起签到记录中...");
         List<StartSign> startSignList = teacherService.
                 getSumStartSignRecordAccordingTeachingTask(teachingTaskId);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code","420050");
-        jsonObject.put("msg","获取课程任务签到记录成功");
+        jsonObject.put("code","200");
+        jsonObject.put("msg","获取课程任务发起签到记录成功");
         jsonObject.put("data",startSignList);
         return jsonObject.toJSONString();
     }
@@ -141,11 +143,11 @@ public class TeacherController {
     @RequestMapping(value = "/getSingleSignRecord")
     public @ResponseBody String getSingleSignRecord(@RequestBody Map<String,String> map){
         //String teachingTaskId = map.get("teaching_task_id");
-        String startSignId = map.get("start_sign_id");
+        String startSignId = map.get("startSignId");
         logger.info("查看签到编号为："+ startSignId + " 的所有学生签到记录中...");
         List<SignInVo> signInList = teacherService.getOnceStartSignRecord(startSignId);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code","420060");
+        jsonObject.put("code","200");
         jsonObject.put("msg","查看某门课程任务的某次签到记录成功");
         jsonObject.put("data",signInList);
         return jsonObject.toJSONString();

@@ -43,9 +43,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean identifyUser(String uid, String id, String password, String user_type, int schoolId) {
+    public boolean identifyUser(String uid, String id, String password, String userType, int schoolId) {
+        //Uuid为学生/教工在数据库中的唯一标识
         Integer uuid;
-        switch (user_type) {  //通过{user_type，id，password，schoolId}查到用户的学校资料，返回用户学校唯一标识
+        switch (userType) {  //通过{user_type，id(学号/工号)，password，schoolId}查到用户的学校资料，返回用户学校唯一标识
             case "1":
                 uuid = studentMapper.getSid(id, password, schoolId);
                 break;
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService {
                 break;
         }
         if(uuid!=null){
-            userMapper.setPositionAndUUID(uid,user_type,uuid);  //设置用户职位
+            userMapper.setPositionAndUUID(uid,userType,uuid);  //设置用户职位
             return true;
         } else {
             return false;

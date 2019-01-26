@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.math.BigInteger;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 模块号：430000
@@ -44,16 +41,16 @@ public class StudentController {
     /**
      * 430010
      * 学生查看个人课表     需要建立一个course_list视图
-     * @param map 参数：student_id 
+     * @param map
      * @return 课表
      */
     @RequestMapping(value = "/checkClassSchedule")
     public @ResponseBody String checkClassSchedule(@RequestBody Map<String,String> map){
-        String studentNum = map.get("student_num");
+        String studentNum = map.get("studentNum");
         logger.info("学号为："+ studentNum + "的同学正在查看他的上课表...");
         List<CourseList> courseList = studentService.getCourseList(studentNum);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code","430010");
+        jsonObject.put("code","200");
         jsonObject.put("msg","获取课程表成功");
         jsonObject.put("data",courseList);
         return jsonObject.toJSONString();
@@ -67,16 +64,16 @@ public class StudentController {
      */
     @RequestMapping(value = "/sign")
     public @ResponseBody String sign(@RequestBody Map<String,String> map){
-        String userId = map.get("user_id");
-        Integer routeSeq = Integer.valueOf(map.get("route_seq")); //路由器序列号
-        Integer startSignId = Integer.valueOf(map.get("start_sign_id")); //start_sign_id
+        String userId = map.get("userId");
+        Integer routeSeq = Integer.valueOf(map.get("routeSeq")); //路由器序列号
+        Integer startSignId = Integer.valueOf(map.get("startSignId")); //start_sign_id
 
         logger.info("userId: "+ userId + "正在签到,"  +
                 "routeSeq: "+ routeSeq + "startSignId: " + startSignId);
 
         JSONObject jsonObject = new JSONObject(); //回写签到数据
-        int teacherRouteSeq = 0;
-        Calendar addOneMinutes = null;
+        int teacherRouteSeq;
+        Calendar addOneMinutes;
         StartSign startSignItem = baseService.getStartSignItem(startSignId); //得到老师发起签到的Item
         if (startSignItem != null){
             teacherRouteSeq = Integer.parseInt(startSignItem.getRouteSeq()); //老师发起签到的路由器序列
@@ -91,27 +88,32 @@ public class StudentController {
                     int signState = 1; //1: 已签到 0：未签到
                     Boolean isSignInSuccess = studentService.sign(userId, SignInTime, signState, startSignId);
                     if (isSignInSuccess){
-                        jsonObject.put("code","430020");
+                        jsonObject.put("code","200");
                         jsonObject.put("msg","签到成功");
+                        jsonObject.put("data","");
                         return jsonObject.toJSONString();
                     } else {
                         jsonObject.put("code","430021");
                         jsonObject.put("msg","签到失败，发生系统错误");
+                        jsonObject.put("data","");
                         return jsonObject.toJSONString();
                     }
                 } else {
                     jsonObject.put("code","430022");
                     jsonObject.put("msg","没有在指定地点签到");
+                    jsonObject.put("data","");
                     return jsonObject.toJSONString();
                 }
             } else {
                 jsonObject.put("code","430023");
                 jsonObject.put("msg","签到时间已过期");
+                jsonObject.put("data","");
                 return jsonObject.toJSONString();
             }
         } else {
             jsonObject.put("code","430024");
             jsonObject.put("msg","未知错误");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         }
     }
@@ -127,27 +129,30 @@ public class StudentController {
      */
     @RequestMapping(value = "/getSignRequest")
     public @ResponseBody String getSignRequest(@RequestBody Map<String,String> map){
-        String userId = map.get("user_id"); //uuid
+        String userId = map.get("userId"); //uuid
 
         logger.info("userId: "+ userId + "正在获取他的签到请求...");
         JSONObject jsonObject = new JSONObject(); //回写签到数据
 
         StartSign startSign = studentService.getSignRequest(userId);
         if (startSign != null){
-            jsonObject.put("code","430030");
-            jsonObject.put("msg","获取签到请求成功");
-            jsonObject.put("startSignId",startSign.getStartSignId());
+            jsonObject.put("code","200");
+            jsonObject.put("msg","获取签到任务成功");
+            Map<String, String> dataMap = new HashMap<>();
+            dataMap.put("startSignId", String.valueOf(startSign.getStartSignId()));
+            jsonObject.put("data",dataMap);
             return jsonObject.toJSONString();
         } else {
             jsonObject.put("code","430031");
-            jsonObject.put("msg","没有签到请求");
+            jsonObject.put("msg","没有签到任务");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         }
     }
 
     /**
      * 430040
-     * 根据学生uid_id和teachingTaskId获取获取该学生的所有签到记录
+     * 根据学生uid_id和teachingTaskId获取获取该学生某上课任务的的所有签到记录
      * @param map
      * @return
      */
@@ -158,36 +163,38 @@ public class StudentController {
         logger.info("获取用户： "+ userId + "学生的上课任务："+teachingTaskId+ "所有签到记录成功");
         List<SignIn> signInList = studentService.getOneTeachingTaskSignRecord(userId, teachingTaskId);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code","430040");
-        jsonObject.put("msg","获取用户： "+ userId + "学生的上课任务："+teachingTaskId+ "所有签到记录成功");
+        jsonObject.put("code","200");
+        jsonObject.put("msg","获取学生的某上课任务的所有签到记录成功");
         jsonObject.put("data",signInList);
         return jsonObject.toJSONString();
     }
+
+
     /**
      * 430050
-     * 补签  补签需要在发起签到的10分钟内进行补签
+     * 发起补签请求  补签需要在发起签到的10分钟内进行补签
      * @param map
      * @return
      */
     @RequestMapping(value = "/retroactive")
     public @ResponseBody String retroactive(@RequestBody Map<String,String> map){
-        String signInId = map.get("sign_in_id");
+        String signInId = map.get("signInId");
         logger.info("正在补签签到编号为： "+ signInId + " 的签到记录中...");
         Boolean isRetroactiveSuccess = studentService.retroactive(signInId);
         JSONObject jsonObject = new JSONObject();
         if (isRetroactiveSuccess){
-            jsonObject.put("code","430040");
-            jsonObject.put("msg","补签成功");
+            jsonObject.put("code","200");
+            jsonObject.put("msg","发起补签请求成功");
             return jsonObject.toJSONString();
         } else {
-            jsonObject.put("code","430040");
-            jsonObject.put("msg","补签失败");
+            jsonObject.put("code","430051");
+            jsonObject.put("msg","发起补签请求失败");
             return jsonObject.toJSONString();
         }
     }
 
     /**
-     * 430040
+     * 430060
      * 某课程的个人签到记录
      * @param map
      * @return

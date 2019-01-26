@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,22 +45,24 @@ public class UserController {
      */
     @RequestMapping(value = "/register")
     public @ResponseBody String register(@RequestBody Map<String,String> map){
-        String phoneNum = map.get("phone_number");
+        String phoneNumber = map.get("phoneNumber");
         String password = map.get("password");
-        
+
+        logger.info("phoneNumber: "+ phoneNumber + "password: " + password + " 正在进行用户注册中...");
         //判断手机号是否已注册
-        Boolean isRepeatRegister = userService.isRepeatRegister(phoneNum);
+        Boolean isRepeatRegister = userService.isRepeatRegister(phoneNumber);
         JSONObject jsonObject = new JSONObject();
         if (isRepeatRegister){
             jsonObject.put("code","410022");
             jsonObject.put("msg","重复手机号");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         }
         User user = new User();
         //1、private String userId
         user.setUserId(CommonsUtils.getUUID());
         //2    private String phoneNum
-        user.setPhoneNum(phoneNum);
+        user.setPhoneNum(phoneNumber);
         //3    private String pwd
         user.setPwd(password);
         //4    private Integer allId
@@ -81,12 +84,14 @@ public class UserController {
         //是否注册成功
         if(isRegisterSuccess){
             //SMSUtils.sendSMS(phoneNum,code);
-            jsonObject.put("code","410010");
+            jsonObject.put("code","200");
             jsonObject.put("msg","注册短信已发送");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         } else {
             jsonObject.put("code","410011");
             jsonObject.put("msg","用户注册失败");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         }
     }
@@ -99,16 +104,19 @@ public class UserController {
     @RequestMapping(value = "/active")
     public @ResponseBody String active(@RequestBody Map<String,String> map){
         String code = map.get("code");
-        String phone_number =  map.get("phone_number");
-        boolean isActiveSuccess = userService.smsActive(code,phone_number);
+        String phoneNumber =  map.get("phoneNumber");
+        logger.info("phoneNumber: "+ phoneNumber + "code: " + code + " 正在激活用户中...");
+        boolean isActiveSuccess = userService.smsActive(code,phoneNumber);
         JSONObject jsonObject = new JSONObject();
         if (isActiveSuccess){
-            jsonObject.put("code","410020");
+            jsonObject.put("code","200");
             jsonObject.put("msg","用户注册成功");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         } else {
             jsonObject.put("code","410021");
             jsonObject.put("msg","用户注册失败");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         }
     }
@@ -121,7 +129,7 @@ public class UserController {
     @RequestMapping(value = "/login")
     public @ResponseBody String login(@RequestBody Map<String,String> map){
         //使用map.get方法得到JSON中id对应的值
-        String phoneNum = map.get("phone_number");
+        String phoneNum = map.get("phoneNumber");
         String password = map.get("password");
 
         logger.info("phoneNum: "+ phoneNum + "password: " + password + " 正在登陆中...");
@@ -142,33 +150,37 @@ public class UserController {
              * id           //学号/工号
              * school
              */
+            Map<String, String> dataMap = new HashMap<>();
             if(user.getPosition()!=null){   //已认证
-                jsonObject.put("code","410030");
+                jsonObject.put("code","200");
                 jsonObject.put("msg","登录成功");
-                jsonObject.put("uid", user.getUserId());
-                jsonObject.put("user_image", user.getImage());
-                jsonObject.put("user_type", user.getPosition());
+                //封装data
+                dataMap.put("uid", user.getUserId());
+                dataMap.put("userImage", user.getImage());
+                dataMap.put("userType", String.valueOf(user.getPosition()));
                 int allId = user.getAllId();  //学号/工号序号
                 int userType = user.getPosition();
                 //获得 姓名，性别，学号；
                 Map<String, String> userDetailMap = userService.getUserDetail(allId, userType);
-                jsonObject.put("name", userDetailMap.get("name"));
-                jsonObject.put("id", userDetailMap.get("id"));
-                jsonObject.put("gender", userDetailMap.get("gender"));
-                jsonObject.put("school", userDetailMap.get("school"));
+                dataMap.put("name", userDetailMap.get("name"));
+                dataMap.put("id", userDetailMap.get("id"));
+                dataMap.put("gender", userDetailMap.get("gender"));
+                dataMap.put("school", userDetailMap.get("school"));
+                jsonObject.put("data", dataMap);
                 return jsonObject.toJSONString();
             } else {  
                 //未认证
-                jsonObject.put("code","410031");
+                jsonObject.put("code","200");
                 jsonObject.put("msg","登录成功,未认证");
-                jsonObject.put("uid", user.getUserId());
-                jsonObject.put("user_image", user.getImage());
+                dataMap.put("uid", user.getUserId());
+                dataMap.put("userImage", user.getImage());
+                jsonObject.put("data",dataMap);
                 return jsonObject.toJSONString();
             }
         } else {
             jsonObject.put("code","410031");
             jsonObject.put("msg","登录失败");
-            
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         }
     }
@@ -189,8 +201,6 @@ public class UserController {
         String ID = map.get("ID");  //学号等等
         String password = map.get("password");
         Integer schoolId = Integer.valueOf(map.get("schoolId"));
-        //String school = map.get("school");
-        //int schoolId = userService.getSchoolId(school); //获取学校id
 
         logger.info("uid:"+uid+" 正在认证中... ID为：" + ID + "用户类型为："+
                 userType + "学校id为：" + schoolId + "教务系统密码为： " + password);
@@ -198,7 +208,7 @@ public class UserController {
         boolean isIdentifySuccess = userService.identifyUser(uid,ID,password,userType,schoolId);
         JSONObject jsonObject = new JSONObject();
         if(isIdentifySuccess){
-            jsonObject.put("code","410040");
+            jsonObject.put("code","200");
             jsonObject.put("msg","用户认证成功");
             /**
              * user_type
@@ -207,18 +217,20 @@ public class UserController {
              * id           //学号/工号
              * school
              */
-            jsonObject.put("user_type",userType);
+            Map<String, String> dataMap = new HashMap<>();
+            dataMap.put("userType",userType);
             Integer allId = userService.getAllId(uid);
             Map<String, String> userDetailMap = userService.getUserDetail(allId, Integer.parseInt(userType));
-            jsonObject.put("name", userDetailMap.get("name"));
-            jsonObject.put("id", userDetailMap.get("id"));
-            jsonObject.put("gender", userDetailMap.get("gender"));
-            jsonObject.put("school", userDetailMap.get("school"));
-            
+            dataMap.put("name", userDetailMap.get("name"));
+            dataMap.put("id", userDetailMap.get("id")); //学号/工号
+            dataMap.put("gender", userDetailMap.get("gender"));
+            dataMap.put("school", userDetailMap.get("school"));
+            jsonObject.put("data", dataMap);
             return jsonObject.toJSONString();
         } else {
             jsonObject.put("code","410041");
             jsonObject.put("msg","用户认证失败");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         }
     }
@@ -247,19 +259,19 @@ public class UserController {
     @RequestMapping(value = "/changePhoneNumber")
     public @ResponseBody String changePhoneNumber(@RequestBody Map<String,String> map){
         String uid = map.get("uid");
-        String newPhoneNumber = map.get("new_phone_number");
+        String newPhoneNumber = map.get("newPhoneNumber");
         Boolean isChangePhoneNumberSuccess = userService.changePhoneNumber(uid, newPhoneNumber);
         JSONObject jsonObject = new JSONObject();
         if(isChangePhoneNumberSuccess){
-            jsonObject.put("code","410060");
+            jsonObject.put("code","200");
             jsonObject.put("phone_number",newPhoneNumber);
             jsonObject.put("msg","修改手机号成功");
-
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         } else {
             jsonObject.put("code","410061");
             jsonObject.put("msg","修改手机号失败");
-
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         }
     }
@@ -278,12 +290,14 @@ public class UserController {
         Boolean isChangePhoneNumberSuccess = userService.changePassword(uid, oldPassword,newPassword);
         JSONObject jsonObject = new JSONObject();
         if(isChangePhoneNumberSuccess){
-            jsonObject.put("code","410070");
+            jsonObject.put("code","200");
             jsonObject.put("msg","修改密码成功");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         } else {
             jsonObject.put("code","410071");
             jsonObject.put("msg","修改密码失败");
+            jsonObject.put("data","");
             return jsonObject.toJSONString();
         }
     }
@@ -297,7 +311,7 @@ public class UserController {
         logger.info(" 获取学校信息中...");
         List<University> universityList= userService.getSchoolInfo();
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("code","410080");
+        jsonObject.put("code","200");
         jsonObject.put("msg","获取所有学校信息成功");
         jsonObject.put("data",universityList);
         return jsonObject.toJSONString();
