@@ -70,4 +70,23 @@
         set  pwd = #{newPassword}
         where user_id = #{uid} and pwd = #{oldPassword}
     </update>
+    <update id="setRegistrationIDByUserId">
+        update user
+        set registration_ID = #{registrationID}
+        where user_id = #{userId}
+    </update>
+    <select id="getRegistrationIDListByStudentIdList" parameterType="list" resultType="String">
+        select registration_ID
+        from user
+        where position = 1 and all_id in
+        <foreach collection="studentIdList" item="id" open="(" close=")"
+                 separator=",">
+        #{id}
+        </foreach>
+    </select>
+    <update id="changeIconByUserId">
+        update user
+        set image = #{newImage}
+        where user_id = #{userId}
+    </update>
 </mapper>

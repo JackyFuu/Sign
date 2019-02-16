@@ -15,10 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.beans.Transient;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class TeacherServiceImpl implements TeacherService {
@@ -32,10 +29,11 @@ public class TeacherServiceImpl implements TeacherService {
     UserMapper userMapper;
 
     @Override
-    public List<TeachingList> getTeachingList(int teacherNum) {
-
-        return teacherMapper.getTeachingListByTeacherNum(teacherNum);
+    public List<TeachingList> getTeachingList(String userId) {
+        Integer teacherId = userMapper.getAllIdByUid(userId);
+        return teacherMapper.getTeachingListByTeacherId(teacherId);
     }
+
 
     @Transient
     @Override
@@ -44,16 +42,18 @@ public class TeacherServiceImpl implements TeacherService {
         int startSignId = startSign.getStartSignId();
         int teachingTaskId= startSign.getTeachingTaskId();
         //获取选了teachingTaskId的学生学号集合
-        List<Integer>  studentIdList= teacherMapper.getStudentIdListByTeachingTaskId(teachingTaskId);
+        List<Integer> studentIdList= teacherMapper.getStudentIdListByTeachingTaskId(teachingTaskId);
 
         //List<String> studentNumList = studentMapper.getStudentNumListByStudentIdList(studentIdList);
-//        Map<String, String> param = new HashMap<>();
-//        //文章标题
-//        param.put("title", "签到任务");
-//        //设置提示信息,内容是文章标题
-//        param.put("msg", "同学，你有一条新的签到任务！");
-//        param.put("startSignId", String.valueOf(startSignId));
-//        jPushUtils.jPushAndroid(param, studentNumList);
+        List<String> registrationIDList = userMapper.getRegistrationIDListByStudentIdList(studentIdList);
+        //studentIdList
+        Map<String, String> param = new HashMap<>();
+        //文章标题
+        param.put("title", "签到任务");
+        //设置提示信息,内容是文章标题
+        param.put("msg", "同学，你有一条新的签到任务！");
+        param.put("startSignId", String.valueOf(startSignId));
+        jPushUtils.jPushAndroid(param, registrationIDList);
 
         //将签到记录插入sign_in表
         for (int studentId: studentIdList) {
@@ -67,7 +67,7 @@ public class TeacherServiceImpl implements TeacherService {
             //private Integer startSignId;
             signIn.setStartSignId(startSignId);
             //private Date signInTime;
-            signIn.setSignInTime(null);
+            signIn.setSignInTime(startSign.getSponsorTime());
             //private Integer reSign;
             signIn.setReSign(0);
             //private Integer state; //1 已签到； 0 未签到

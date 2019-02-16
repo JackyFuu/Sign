@@ -10,11 +10,13 @@ import java.util.List;
 public interface TeacherService {
 
 
-    List<TeachingList> getTeachingList(int teacherNum);
+    //List<TeachingList> getTeachingList(int teacherNum);
 
     Boolean startSign(StartSign startSign);
 
     List<StartSign> getSumStartSignRecordAccordingTeachingTask(String teachingTaskId);
 
     List<SignInVo> getOnceStartSignRecord(String startSignId);
+
+    List<TeachingList> getTeachingList(String userId);
 }

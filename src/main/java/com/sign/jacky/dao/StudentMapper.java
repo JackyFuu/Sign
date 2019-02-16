@@ -15,7 +15,7 @@ public interface StudentMapper {
 
     Map<String,String> getStudentDetail(int allId);
 
-    List<CourseList> getCourseListByStudentNum(String studentNum);
+    List<CourseList> getCourseListByStudentId(Integer studentId);
 
 //    Integer getSidByStudentNumAndSchoolId(@Param("studentNum") String studentNum,
 //                                      @Param("schoolId") Integer schoolId);
@@ -41,4 +41,5 @@ public interface StudentMapper {
             @Param("teachingTaskId") String teachingTaskId);
 
     List<String> getStudentNumListByStudentIdList(List<Integer> studentIdList);
+
 }

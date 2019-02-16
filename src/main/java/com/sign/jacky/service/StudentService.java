@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 public interface StudentService {
-    List<CourseList> getCourseList(String student_num);
+    List<CourseList> getCourseList(String userId);
 
     StartSign getSignRequest(String userId);
 

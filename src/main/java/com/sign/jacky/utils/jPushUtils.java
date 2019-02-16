@@ -28,7 +28,7 @@ public class jPushUtils {
         //推送的关键,构造一个payload
         PushPayload payload = PushPayload.newBuilder()
                 .setPlatform(Platform.android())//指定android平台的用户
-                .setAudience(Audience.registrationId(String.valueOf(registrationIdMap)))
+                .setAudience(Audience.registrationId(registrationIdMap))
                 //发送内容,这里不要盲目复制粘贴,这里是我从controller层中拿过来的参数)
                 .setNotification(Notification.android(param.get("msg"), param.get("title"), param))
                 //这里是指定开发环境,不用设置也没关系
@@ -37,6 +37,7 @@ public class jPushUtils {
                 .build();
         try {
             PushResult pu = jpushClient.sendPush(payload);
+            System.out.println(pu);
         } catch (APIConnectionException | APIRequestException e) {
             e.printStackTrace();
         }

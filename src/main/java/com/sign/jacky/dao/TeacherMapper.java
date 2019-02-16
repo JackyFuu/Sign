@@ -13,8 +13,6 @@ public interface TeacherMapper {
 
     Map<String,String> getTeacherDetail(int allId);
 
-    List<TeachingList> getTeachingListByTeacherNum(@Param("teacherNum") int teacherNum);
-
     void startSign(@Param("startSign") StartSign startSign);
 
     List<Integer> getStudentIdListByTeachingTaskId(int teachingTaskId);
@@ -23,4 +21,8 @@ public interface TeacherMapper {
 
     List<SignInVo> getOnceStartSignRecordByTeachingTaskIdAndStartSignId(
             @Param("startSignId") String startSignId);
+
+    //List<TeachingList> getTeachingListByUserId(@Param("userId") String userId);
+
+    List<TeachingList> getTeachingListByTeacherId(@Param("teacherId") Integer teacherId);
 }

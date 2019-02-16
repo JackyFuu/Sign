@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -46,9 +45,9 @@ public class StudentController {
      */
     @RequestMapping(value = "/checkClassSchedule")
     public @ResponseBody String checkClassSchedule(@RequestBody Map<String,String> map){
-        String studentNum = map.get("studentNum");
-        logger.info("学号为："+ studentNum + "的同学正在查看他的上课表...");
-        List<CourseList> courseList = studentService.getCourseList(studentNum);
+        String userId = map.get("userId"); //uuid
+        logger.info("userId为："+ userId + "的同学正在查看他的上课表...");
+        List<CourseList> courseList = studentService.getCourseList(userId);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code","200");
         jsonObject.put("msg","获取课程表成功");
@@ -152,7 +151,7 @@ public class StudentController {
 
     /**
      * 430040
-     * 根据学生uid_id和teachingTaskId获取获取该学生某上课任务的的所有签到记录
+     * 根据学生uidId和teachingTaskId获取获取该学生某上课任务的的所有签到记录
      * @param map
      * @return
      */

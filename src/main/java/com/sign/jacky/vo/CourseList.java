@@ -2,7 +2,7 @@ package com.sign.jacky.vo;
 
 public class CourseList {
 
-    private String studentNum;
+    private Integer studentId;
 
     private Integer teachingTaskId;
 
@@ -22,12 +22,12 @@ public class CourseList {
 
     private String teachingPlace;
 
-    public String getStudentNum() {
-        return studentNum;
+    public Integer getStudentId() {
+        return studentId;
     }
 
-    public void setStudentNum(String studentNum) {
-        this.studentNum = studentNum;
+    public void setStudentId(Integer studentId) {
+        this.studentId = studentId;
     }
 
     public Integer getTeachingTaskId() {

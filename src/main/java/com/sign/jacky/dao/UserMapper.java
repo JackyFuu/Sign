@@ -5,7 +5,6 @@ import com.sign.jacky.entity.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
-import java.util.Map;
 
 public interface UserMapper {
 
@@ -31,6 +30,12 @@ public interface UserMapper {
     int updatePasswordByUid( @Param("uid") String uid,
                              @Param("oldPassword") String oldPassword,
                              @Param("newPassword") String newPassword);
+
+    int setRegistrationIDByUserId(@Param("userId") String userId, @Param("registrationID") String registrationID);
+
+    List<String> getRegistrationIDListByStudentIdList(@Param("studentIdList") List<Integer> studentIdList);
+
+    int changeIconByUserId(@Param("userId") String userId,@Param("newImage") String newImage);
 
     //List<String> getUserIdListByStudentIdList(List<Integer> studentIdList);
 

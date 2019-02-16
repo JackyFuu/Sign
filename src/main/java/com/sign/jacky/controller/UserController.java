@@ -8,14 +8,30 @@ import com.sign.jacky.service.UserService;
 import com.sign.jacky.utils.CommonsUtils;
 import com.sign.jacky.utils.SMSUtils;
 import com.sign.jacky.vo.UserDetail;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload.servlet.ServletRequestContext;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -158,6 +174,7 @@ public class UserController {
                 dataMap.put("uid", user.getUserId());
                 dataMap.put("userImage", user.getImage());
                 dataMap.put("userType", String.valueOf(user.getPosition()));
+                dataMap.put("phoneNumber", phoneNum);
                 int allId = user.getAllId();  //学号/工号序号
                 int userType = user.getPosition();
                 //获得 姓名，性别，学号；
@@ -237,17 +254,73 @@ public class UserController {
 
     /**
      * 修改头像 410050
-     * @param map
+     * @param
      * @return
      */
-    @RequestMapping(value = "/changeIcon")
-    public @ResponseBody String changeIcon(@RequestBody Map<String,String> map){
-        String uid = map.get("uid");
-        Boolean isChangeIconSuccess = userService.changeIcon(uid);
+    @RequestMapping(value = "/changeIcon", method = RequestMethod.POST)
+    public @ResponseBody String changeIcon(HttpServletRequest request){
+        //收集数据的容器
+        Map<String, Object> map = new HashMap<>();
+        try {
+            String path_temp = request.getSession().getServletContext().getRealPath("temp");
+            //1、创建磁盘文件工厂
+            //作用：设置缓存文件的大小  设置临时文件存储的位置
+            DiskFileItemFactory factory = new DiskFileItemFactory();
+            factory.setSizeThreshold(1024*1024);
+            factory.setRepository(new File(path_temp));
+            //2、创建文件上传核心对象
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            //设置上传文件的名称的编码
+            upload.setHeaderEncoding("UTF-8");
+            //ServletFileUpload的API
+            //判断表单是否是文件上传的表单
+            boolean multipartContent = ServletFileUpload.isMultipartContent(request);
+            if (multipartContent) {
+                //3、通过文件上传核心对象 upload 解析request域中的文件项集合
+                List<FileItem> parseRequest = upload.parseRequest(request);
+                //4、遍历List中的每一个表单项
+                for (FileItem fileItem : parseRequest) {
+                    if (fileItem.isFormField()) {
+                        String fieldName = fileItem.getFieldName();
+                        String fieldValue = fileItem.getString("UTF-8");
+                        map.put(fieldName, fieldValue);
+                    } else {
+                        //文本上传项，获取文本名字，获取文件内容
+                        String fileName = fileItem.getName();
+                        String path = request.getSession().getServletContext().getRealPath("/images/icon");
+                        InputStream in = fileItem.getInputStream();  //获取文本内容
+                        String last_path = map.get("userId") +
+                                "_" + CommonsUtils.getVerificationCode() + fileName.substring(fileName.lastIndexOf("."));
+                        OutputStream out = new FileOutputStream(path + "/" + last_path);
+                        IOUtils.copy(in, out);
+                        in.close();
+                        out.close();
+                        //删除临时文件
+                        fileItem.delete();
+                        map.put("image","/images/icon/"+last_path);
+                    }
+                }
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        String userId = (String) map.get("userId");
+        String image = (String) map.get("image");
+        logger.info("userId:"+userId+" 正在修改头像中... 新image地址为：" + image);
+        Boolean isChangeIconSuccess = userService.changeIcon(userId, image);
+        JSONObject jsonObject = new JSONObject();
         if(isChangeIconSuccess){
-            return null;
+            jsonObject.put("code","200");
+            jsonObject.put("msg","修改头像成功");
+            Map<String, String> dataMap = new HashMap<>();
+            dataMap.put("image",image);
+            jsonObject.put("data",dataMap);
+            return jsonObject.toJSONString();
         } else {
-            return null;
+            jsonObject.put("code","410050");
+            jsonObject.put("msg","修改头像失败");
+            jsonObject.put("data","");
+            return jsonObject.toJSONString();
         }
     }
 
@@ -316,5 +389,31 @@ public class UserController {
         jsonObject.put("data",universityList);
         return jsonObject.toJSONString();
     }
+
+    /**
+     * 410090 存储RegistrationID
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/pushRegistrationID")
+    public @ResponseBody String pushRegistrationID(@RequestBody Map<String,String> map){
+        String userId = map.get("userId");
+        String registrationID = map.get("registrationID");
+        logger.info("userId: "+ userId + " 正在保存registrationID，registrationID为："+ registrationID);
+        Boolean isSaveRegistrationIDSuccess =userService.setRegistrationID(userId,registrationID);
+        JSONObject jsonObject = new JSONObject();
+        if(isSaveRegistrationIDSuccess){
+            jsonObject.put("code","200");
+            jsonObject.put("msg","保存RegistrationID成功");
+            jsonObject.put("data","");
+            return jsonObject.toJSONString();
+        } else {
+            jsonObject.put("code","410091");
+            jsonObject.put("msg","保存RegistrationID失败");
+            jsonObject.put("data","");
+            return jsonObject.toJSONString();
+        }
+    }
+
 
 }

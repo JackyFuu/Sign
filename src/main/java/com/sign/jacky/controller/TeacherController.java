@@ -48,9 +48,10 @@ public class TeacherController {
      */
     @RequestMapping(value = "/getTeachingList")
     public @ResponseBody  String getTeachingList(@RequestBody Map<String,String> map){
-        String teacherNum = map.get("teacherNum");
-        logger.info("teacherId: "+Integer.parseInt(teacherNum) + "正在查看他的授课表...");
-        List<TeachingList> teachingList = teacherService.getTeachingList(Integer.parseInt(teacherNum));
+        //String teacherNum = map.get("teacherNum");
+        String userId = map.get("userId");
+        logger.info("teacherId: "+userId + "正在查看他的授课表...");
+        List<TeachingList> teachingList = teacherService.getTeachingList(userId);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("code","200");
         jsonObject.put("msg","获取授课表成功");
@@ -142,7 +143,6 @@ public class TeacherController {
      */
     @RequestMapping(value = "/getSingleSignRecord")
     public @ResponseBody String getSingleSignRecord(@RequestBody Map<String,String> map){
-        //String teachingTaskId = map.get("teaching_task_id");
         String startSignId = map.get("startSignId");
         logger.info("查看签到编号为："+ startSignId + " 的所有学生签到记录中...");
         List<SignInVo> signInList = teacherService.getOnceStartSignRecord(startSignId);

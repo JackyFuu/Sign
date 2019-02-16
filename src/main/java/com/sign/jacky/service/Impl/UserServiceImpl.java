@@ -104,8 +104,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Boolean changeIcon(String uid) {
-        return null;
+    public Boolean changeIcon(String userId, String newImage) {
+        int row = userMapper.changeIconByUserId(userId, newImage);
+        return row > 0;
     }
 
     @Override
@@ -123,6 +124,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<University> getSchoolInfo() {
         return baseMapper.getSchoolInfo();
+    }
+
+    @Override
+    public Boolean setRegistrationID(String userId, String registrationID) {
+        int row = userMapper.setRegistrationIDByUserId(userId, registrationID);
+        return row>0;
     }
 
 

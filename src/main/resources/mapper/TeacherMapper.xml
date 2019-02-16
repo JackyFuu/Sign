@@ -40,10 +40,10 @@
         from teacher t, university u
         where teacher_id = #{allId} and t.school_id = u.school_id
     </select>
-    <select id="getTeachingListByTeacherNum" resultMap="teachingList">
+    <select id="getTeachingListByTeacherId" resultMap="teachingList">
         select *
         from teaching_list
-        where teacher_num = #{teacherNum}
+        where teacher_id = #{teacherId}
     </select>
     <insert id="startSign" parameterType="com.sign.jacky.entity.StartSign"
         useGeneratedKeys="true" keyProperty="startSign.startSignId">

@@ -29,8 +29,9 @@ public class StudentServiceImpl implements com.sign.jacky.service.StudentService
     BaseMapper baseMapper;
 
     @Override
-    public List<CourseList> getCourseList(String studentNum) {
-        return studentMapper.getCourseListByStudentNum(studentNum);
+    public List<CourseList> getCourseList(String userId) {
+        Integer studentId = userMapper.getAllIdByUid(userId);
+        return studentMapper.getCourseListByStudentId(studentId);
     }
 
 
@@ -46,7 +47,7 @@ public class StudentServiceImpl implements com.sign.jacky.service.StudentService
      */
     @Override
     public StartSign getSignRequest(String userId) {
-        //根据学号和学校名获取学生id
+
         int studentId = userMapper.getAllIdByUid(userId);
         //然后通过select_course表中获取teaching_task_id列表
         List<Integer> teachingTaskIdList = studentMapper.getTeachingTaskIdListBySid(studentId);

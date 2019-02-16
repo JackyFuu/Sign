@@ -23,11 +23,13 @@ public interface UserService {
 
     Integer getAllId(String uid);
 
-    Boolean changeIcon(String uid);
+    Boolean changeIcon(String userId, String newPath);
 
     Boolean changePhoneNumber(String uid, String newPhoneNumber);
 
     Boolean changePassword(String uid, String oldPassword, String newPassword);
 
     List<University> getSchoolInfo();
+
+    Boolean setRegistrationID(String userId, String registrationID);
 }
