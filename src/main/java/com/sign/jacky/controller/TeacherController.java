@@ -4,6 +4,7 @@ package com.sign.jacky.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.service.TeacherService;
+import com.sign.jacky.vo.RetroactiveRequestList;
 import com.sign.jacky.vo.SignInVo;
 import com.sign.jacky.vo.TeachingList;
 import org.apache.log4j.LogManager;
@@ -15,10 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * 模块号：420000
@@ -102,9 +100,17 @@ public class TeacherController {
      * 查看补签请求列表
      * @return
      */
-    @RequestMapping(value = "/checkRetroactive")
-    public @ResponseBody String checkRetroactive(@RequestBody Map<String,String> map){
-        return null;
+    @RequestMapping(value = "/getRetroactiveRequestList")
+    public @ResponseBody String getRetroactiveRequestList(@RequestBody Map<String,String> map){
+        String userId = map.get("userId");
+        logger.info("userId(老师）: " + userId + "查看补签请求列表...");
+        List<RetroactiveRequestList> retroactiveRequestList= teacherService.getRetroactiveRequestList(userId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code","200");
+        jsonObject.put("msg","查看补签请求列表成功");
+        jsonObject.put("data",retroactiveRequestList);
+        return jsonObject.toJSONString();
+
     }
 
     /**
@@ -114,7 +120,28 @@ public class TeacherController {
      */
     @RequestMapping(value = "/agreeRetroactive")
     public @ResponseBody String agreeRetroactive(@RequestBody Map<String,String> map){
-        return null;
+        String signInId = map.get("signInId");
+        String isAgree = map.get("isAgree");  //1 表示同意， 0 表示拒绝
+        logger.info("正在同意/拒绝signInId: " + signInId + "的补签请求...");
+        //如果同意则设置标志位，如果不同意则不做任何操作
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code","200");
+        if (isAgree.equals("1")){
+            //设置sign_in表的re_sign和state标志位为1,resign_news表的state标志位为1.
+            teacherService.agreeRetroactive(signInId);
+            jsonObject.put("code","200");
+            jsonObject.put("msg","同意补签请求");
+            Map<String, String> dataMap = new HashMap<>();
+            dataMap.put("state", "1");
+            jsonObject.put("data",dataMap);
+            return jsonObject.toJSONString();
+        } else {
+            jsonObject.put("msg","拒绝补签请求");
+            Map<String, String> dataMap1 = new HashMap<>();
+            dataMap1.put("state", "0");
+            jsonObject.put("data",dataMap1);
+            return jsonObject.toJSONString();
+        }
     }
 
     /**

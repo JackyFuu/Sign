@@ -324,30 +324,30 @@ public class UserController {
         }
     }
 
-    /**
-     * 修改手机号  410060 修改手机号成功  410061 修改手机号失败
-     * @param map
-     * @return
-     */
-    @RequestMapping(value = "/changePhoneNumber")
-    public @ResponseBody String changePhoneNumber(@RequestBody Map<String,String> map){
-        String uid = map.get("uid");
-        String newPhoneNumber = map.get("newPhoneNumber");
-        Boolean isChangePhoneNumberSuccess = userService.changePhoneNumber(uid, newPhoneNumber);
-        JSONObject jsonObject = new JSONObject();
-        if(isChangePhoneNumberSuccess){
-            jsonObject.put("code","200");
-            jsonObject.put("phone_number",newPhoneNumber);
-            jsonObject.put("msg","修改手机号成功");
-            jsonObject.put("data","");
-            return jsonObject.toJSONString();
-        } else {
-            jsonObject.put("code","410061");
-            jsonObject.put("msg","修改手机号失败");
-            jsonObject.put("data","");
-            return jsonObject.toJSONString();
-        }
-    }
+//    /**
+//     * 修改手机号  410060 修改手机号成功  410061 修改手机号失败
+//     * @param map
+//     * @return
+//     */
+//    @RequestMapping(value = "/changePhoneNumber")
+//    public @ResponseBody String changePhoneNumber(@RequestBody Map<String,String> map){
+//        String uid = map.get("uid");
+//        String newPhoneNumber = map.get("newPhoneNumber");
+//        Boolean isChangePhoneNumberSuccess = userService.changePhoneNumber(uid, newPhoneNumber);
+//        JSONObject jsonObject = new JSONObject();
+//        if(isChangePhoneNumberSuccess){
+//            jsonObject.put("code","200");
+//            jsonObject.put("phone_number",newPhoneNumber);
+//            jsonObject.put("msg","修改手机号成功");
+//            jsonObject.put("data","");
+//            return jsonObject.toJSONString();
+//        } else {
+//            jsonObject.put("code","410061");
+//            jsonObject.put("msg","修改手机号失败");
+//            jsonObject.put("data","");
+//            return jsonObject.toJSONString();
+//        }
+//    }
 
     /**
      * 修改密码  410070 修改密码成功  410071 修改密码失败

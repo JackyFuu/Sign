@@ -6,9 +6,9 @@ import com.sign.jacky.dao.TeacherMapper;
 import com.sign.jacky.dao.UserMapper;
 import com.sign.jacky.entity.SignIn;
 import com.sign.jacky.entity.StartSign;
-import com.sign.jacky.entity.Teaching;
 import com.sign.jacky.service.TeacherService;
 import com.sign.jacky.utils.jPushUtils;
+import com.sign.jacky.vo.RetroactiveRequestList;
 import com.sign.jacky.vo.SignInVo;
 import com.sign.jacky.vo.TeachingList;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +32,21 @@ public class TeacherServiceImpl implements TeacherService {
     public List<TeachingList> getTeachingList(String userId) {
         Integer teacherId = userMapper.getAllIdByUid(userId);
         return teacherMapper.getTeachingListByTeacherId(teacherId);
+    }
+
+    @Override
+    public List<RetroactiveRequestList> getRetroactiveRequestList(String userId) {
+        Integer teacherId = userMapper.getAllIdByUid(userId);
+        return teacherMapper.getRetroactiveRequestListByTeacherId(teacherId);
+    }
+
+    @Override
+    public void agreeRetroactive(String signInId) {
+        //设置sign_in表的re_sign和state标志位为1
+        //设置sign_in表的re_sign标志位和resign_news表的state标志位。
+        teacherMapper.agreeRetroactiveBySignInId(signInId);
+        //设置resign_news表的state标志位。
+        teacherMapper.setResignNewsStateBySignInId(signInId);
     }
 
 

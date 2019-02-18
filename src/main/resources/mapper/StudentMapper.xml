@@ -105,4 +105,8 @@
             #{item}
         </foreach>
     </select>
+    <insert id="saveResignNews" parameterType="com.sign.jacky.entity.ResignNews">
+        insert into resign_news(sign_in_id, resign_reason, state, create_time)
+        values(#{resignNews.signInId},#{resignNews.resignReason},#{resignNews.state},#{resignNews.createTime})
+    </insert>
 </mapper>

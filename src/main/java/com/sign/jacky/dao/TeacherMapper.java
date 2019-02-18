@@ -1,6 +1,7 @@
 package com.sign.jacky.dao;
 
 import com.sign.jacky.entity.StartSign;
+import com.sign.jacky.vo.RetroactiveRequestList;
 import com.sign.jacky.vo.SignInVo;
 import com.sign.jacky.vo.TeachingList;
 import org.apache.ibatis.annotations.Param;
@@ -25,4 +26,10 @@ public interface TeacherMapper {
     //List<TeachingList> getTeachingListByUserId(@Param("userId") String userId);
 
     List<TeachingList> getTeachingListByTeacherId(@Param("teacherId") Integer teacherId);
+
+    List<RetroactiveRequestList> getRetroactiveRequestListByTeacherId(Integer teacherId);
+
+    void agreeRetroactiveBySignInId(@Param("signInId") String signInId);
+
+    void setResignNewsStateBySignInId(@Param("signInId") String signInId);
 }

@@ -3,6 +3,7 @@ package com.sign.jacky.service.Impl;
 import com.sign.jacky.dao.BaseMapper;
 import com.sign.jacky.dao.StudentMapper;
 import com.sign.jacky.dao.UserMapper;
+import com.sign.jacky.entity.ResignNews;
 import com.sign.jacky.entity.SignIn;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.vo.CourseList;
@@ -106,4 +107,10 @@ public class StudentServiceImpl implements com.sign.jacky.service.StudentService
         int studentId = userMapper.getAllIdByUid(userId);
         return studentMapper.getOneTeachingTaskSignRecordByStudentIdAndTeachingTaskId(studentId, teachingTaskId);
     }
+
+    @Override
+    public void saveResignNews(ResignNews resignNews) {
+        studentMapper.saveResignNews(resignNews);
+    }
+
 }

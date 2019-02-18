@@ -1,5 +1,6 @@
 package com.sign.jacky.dao;
 
+import com.sign.jacky.entity.ResignNews;
 import com.sign.jacky.entity.SignIn;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.vo.CourseList;
@@ -42,4 +43,5 @@ public interface StudentMapper {
 
     List<String> getStudentNumListByStudentIdList(List<Integer> studentIdList);
 
+    void saveResignNews(@Param("resignNews") ResignNews resignNews);
 }

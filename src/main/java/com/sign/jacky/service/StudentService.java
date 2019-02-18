@@ -1,5 +1,6 @@
 package com.sign.jacky.service;
 
+import com.sign.jacky.entity.ResignNews;
 import com.sign.jacky.entity.SignIn;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.vo.CourseList;
@@ -19,4 +20,6 @@ public interface StudentService {
     Boolean retroactive(String signInId);
 
     List<SignIn> getOneTeachingTaskSignRecord(String userId, String teachingTaskId);
+
+    void saveResignNews(ResignNews resignNews);
 }

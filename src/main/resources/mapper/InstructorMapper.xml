@@ -22,4 +22,10 @@
         from instructor i, university u
         where teacher_id = #{allId} and i.school_id = u.school_id
     </select>
+
+    <select id="getMajorListByInstructorId" resultType="com.sign.jacky.entity.Profession">
+        select *
+        from profession
+        where instructor_id = #{instructorId}
+    </select>
 </mapper>

@@ -2,6 +2,7 @@ package com.sign.jacky.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.sign.jacky.entity.ResignNews;
 import com.sign.jacky.entity.SignIn;
 import com.sign.jacky.entity.StartSign;
 import com.sign.jacky.service.BaseService;
@@ -175,21 +176,29 @@ public class StudentController {
      * @param map
      * @return
      */
-    @RequestMapping(value = "/retroactive")
-    public @ResponseBody String retroactive(@RequestBody Map<String,String> map){
-        String signInId = map.get("signInId");
+    @RequestMapping(value = "/requestRetroactive")
+    public @ResponseBody String requestRetroactive(@RequestBody Map<String,String> map){
+       
+        Integer signInId = Integer.valueOf(map.get("signInId"));
+        String resignReason = map.get("resignReason");
+        logger.info("正在补签签到编号为： "+ signInId + " 的签到记录中..., 补签原因为：resignReason" + resignReason);
+        ResignNews resignNews = new ResignNews();
+//        private Integer resignNewsId;
+//        private Integer signInId;
+        resignNews.setSignInId(signInId);
+//        private String resignReason;
+        resignNews.setResignReason(resignReason);
+//        private Integer state;
+        resignNews.setState(0); //0 未处理； 1 已处理
+//        private Date createTime;
+        resignNews.setCreateTime(new Date());
         logger.info("正在补签签到编号为： "+ signInId + " 的签到记录中...");
-        Boolean isRetroactiveSuccess = studentService.retroactive(signInId);
+        studentService.saveResignNews(resignNews);
         JSONObject jsonObject = new JSONObject();
-        if (isRetroactiveSuccess){
-            jsonObject.put("code","200");
-            jsonObject.put("msg","发起补签请求成功");
-            return jsonObject.toJSONString();
-        } else {
-            jsonObject.put("code","430051");
-            jsonObject.put("msg","发起补签请求失败");
-            return jsonObject.toJSONString();
-        }
+        jsonObject.put("code","200");
+        jsonObject.put("msg","发起补签请求成功");
+        jsonObject.put("data","");
+        return jsonObject.toJSONString();
     }
 
     /**

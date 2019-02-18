@@ -84,4 +84,19 @@
         where start_sign_id = #{startSignId}
           and si.student_id = s.student_id
     </select>
+    <select id="getRetroactiveRequestListByTeacherId" resultType="com.sign.jacky.vo.RetroactiveRequestList">
+        select *
+        from RetroactiveRequestList
+        where teacher_id = #{teacherId}
+    </select>
+    <select id="agreeRetroactiveBySignInId">
+        update sign_in
+        set re_sign = 1 and state = 1
+        where sign_in_id = #{signInId}
+    </select>
+    <update id="setResignNewsStateBySignInId">
+        update resign_news
+        set state = 1
+        where sign_in_id = #{signInId}
+    </update>
 </mapper>
