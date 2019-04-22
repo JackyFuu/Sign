@@ -32,4 +32,6 @@ public interface TeacherMapper {
     void agreeRetroactiveBySignInId(@Param("signInId") String signInId);
 
     void setResignNewsStateBySignInId(@Param("signInId") String signInId);
+
+    void setResignNewsState(@Param("signInId") String signInId);
 }

@@ -91,12 +91,17 @@
     </select>
     <select id="agreeRetroactiveBySignInId">
         update sign_in
-        set re_sign = 1 and state = 1
+        set re_sign = 1 , state = 1
         where sign_in_id = #{signInId}
     </select>
     <update id="setResignNewsStateBySignInId">
         update resign_news
         set state = 1
+        where sign_in_id = #{signInId}
+    </update>
+    <update id="setResignNewsState">
+        update resign_news
+        set state = 2
         where sign_in_id = #{signInId}
     </update>
 </mapper>

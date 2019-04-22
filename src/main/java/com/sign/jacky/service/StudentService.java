@@ -22,4 +22,6 @@ public interface StudentService {
     List<SignIn> getOneTeachingTaskSignRecord(String userId, String teachingTaskId);
 
     void saveResignNews(ResignNews resignNews);
+
+    Boolean isTwoRequestRetroactive(Integer signInId);
 }

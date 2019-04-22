@@ -49,6 +49,11 @@ public class TeacherServiceImpl implements TeacherService {
         teacherMapper.setResignNewsStateBySignInId(signInId);
     }
 
+    @Override
+    public void rejectRetroactive(String signInId) {
+        teacherMapper.setResignNewsState(signInId);
+    }
+
 
     @Transient
     @Override

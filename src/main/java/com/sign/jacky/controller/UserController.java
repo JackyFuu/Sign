@@ -90,16 +90,15 @@ public class UserController {
         // 7   private Integer state
         user.setState(0);
         // 8   private String code
-        //String code = CommonsUtils.getVerificationCode();
-        String code = "123456";
+        String code = CommonsUtils.getVerificationCode();
+        //String code = "123456";
         user.setCode(code);
-        System.out.println("code: "+code);
 
         //user传递到service层
         boolean isRegisterSuccess = userService.register(user);
         //是否注册成功
         if(isRegisterSuccess){
-            //SMSUtils.sendSMS(phoneNum,code);
+            SMSUtils.sendSMS(phoneNumber,code);
             jsonObject.put("code","200");
             jsonObject.put("msg","注册短信已发送");
             jsonObject.put("data","");

@@ -113,4 +113,11 @@ public class StudentServiceImpl implements com.sign.jacky.service.StudentService
         studentMapper.saveResignNews(resignNews);
     }
 
+    @Override
+    public Boolean isTwoRequestRetroactive(Integer signInId) {
+        Integer resignNewsId = studentMapper.isTwoRequestRetroactiveBySignInId(signInId);
+        return resignNewsId != null;
+
+    }
+
 }

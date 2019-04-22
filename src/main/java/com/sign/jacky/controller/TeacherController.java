@@ -121,7 +121,7 @@ public class TeacherController {
     @RequestMapping(value = "/agreeRetroactive")
     public @ResponseBody String agreeRetroactive(@RequestBody Map<String,String> map){
         String signInId = map.get("signInId");
-        String isAgree = map.get("isAgree");  //1 表示同意， 0 表示拒绝
+        String isAgree = map.get("isAgree");  //1 表示同意， 0表示拒绝
         logger.info("正在同意/拒绝signInId: " + signInId + "的补签请求...");
         //如果同意则设置标志位，如果不同意则不做任何操作
         JSONObject jsonObject = new JSONObject();
@@ -129,16 +129,17 @@ public class TeacherController {
         if (isAgree.equals("1")){
             //设置sign_in表的re_sign和state标志位为1,resign_news表的state标志位为1.
             teacherService.agreeRetroactive(signInId);
-            jsonObject.put("code","200");
             jsonObject.put("msg","同意补签请求");
             Map<String, String> dataMap = new HashMap<>();
             dataMap.put("state", "1");
             jsonObject.put("data",dataMap);
             return jsonObject.toJSONString();
         } else {
+            //设置resign_news表的state标志位为2.
+            teacherService.rejectRetroactive(signInId);
             jsonObject.put("msg","拒绝补签请求");
             Map<String, String> dataMap1 = new HashMap<>();
-            dataMap1.put("state", "0");
+            dataMap1.put("state", "2");
             jsonObject.put("data",dataMap1);
             return jsonObject.toJSONString();
         }

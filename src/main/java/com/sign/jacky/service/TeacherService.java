@@ -23,4 +23,6 @@ public interface TeacherService {
     List<RetroactiveRequestList> getRetroactiveRequestList(String userId);
 
     void agreeRetroactive(String signInId);
+
+    void rejectRetroactive(String signInId);
 }

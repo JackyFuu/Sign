@@ -58,25 +58,25 @@ public class StudentController {
 
     /**
      * 430020
-     * 签到 判断签到时间是否在老师发起签到的3分钟内；判断学生的路由序列是否和老师发起的路由序列是一致的
+     * 签到 判断签到时间是否在老师发起签到的1分钟内；判断学生的路由序列是否和老师发起的路由序列是一致的
      * @param map ..
      * @return
      */
     @RequestMapping(value = "/sign")
     public @ResponseBody String sign(@RequestBody Map<String,String> map){
         String userId = map.get("userId");
-        Integer routeSeq = Integer.valueOf(map.get("routeSeq")); //路由器序列号
+        String routeSeq = map.get("routeSeq"); //路由器序列号
         Integer startSignId = Integer.valueOf(map.get("startSignId")); //start_sign_id
 
         logger.info("userId: "+ userId + "正在签到,"  +
                 "routeSeq: "+ routeSeq + "startSignId: " + startSignId);
 
         JSONObject jsonObject = new JSONObject(); //回写签到数据
-        int teacherRouteSeq;
+        String teacherRouteSeq;
         Calendar addOneMinutes;
         StartSign startSignItem = baseService.getStartSignItem(startSignId); //得到老师发起签到的Item
         if (startSignItem != null){
-            teacherRouteSeq = Integer.parseInt(startSignItem.getRouteSeq()); //老师发起签到的路由器序列
+            teacherRouteSeq = startSignItem.getRouteSeq(); //老师发起签到的路由器序列
             addOneMinutes = Calendar.getInstance();
             addOneMinutes.setTime(startSignItem.getSponsorTime());
             addOneMinutes.add(Calendar.MINUTE, 1);  //老师发起签到时间加1分钟
@@ -84,7 +84,7 @@ public class StudentController {
             Date SignInTime = new Date(); //学生开始签到时间
             //如果学生签到时间在老师发起签到后的一分钟之内，并且路由器序列相等，则可以签到
             if(SignInTime.before(addOneMinutes.getTime())) {
-                if(teacherRouteSeq == routeSeq){
+                if(teacherRouteSeq.equals(routeSeq)){
                     int signState = 1; //1: 已签到 0：未签到
                     Boolean isSignInSuccess = studentService.sign(userId, SignInTime, signState, startSignId);
                     if (isSignInSuccess){
@@ -180,6 +180,14 @@ public class StudentController {
     public @ResponseBody String requestRetroactive(@RequestBody Map<String,String> map){
        
         Integer signInId = Integer.valueOf(map.get("signInId"));
+        Boolean isTwoRequestRetroactive = studentService.isTwoRequestRetroactive(signInId);
+        if (isTwoRequestRetroactive) {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("code","200");
+            jsonObject.put("msg","签到任务只能发起一次补签请求");
+            jsonObject.put("data","");
+            return jsonObject.toJSONString();
+        }
         String resignReason = map.get("resignReason");
         logger.info("正在补签签到编号为： "+ signInId + " 的签到记录中..., 补签原因为：resignReason" + resignReason);
         ResignNews resignNews = new ResignNews();
@@ -189,7 +197,8 @@ public class StudentController {
 //        private String resignReason;
         resignNews.setResignReason(resignReason);
 //        private Integer state;
-        resignNews.setState(0); //0 未处理； 1 已处理
+        resignNews.setState(1); //1 代表为未处理，2代表同意，3代表拒绝
+
 //        private Date createTime;
         resignNews.setCreateTime(new Date());
         logger.info("正在补签签到编号为： "+ signInId + " 的签到记录中...");

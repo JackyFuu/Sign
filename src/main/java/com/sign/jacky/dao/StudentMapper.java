@@ -44,4 +44,6 @@ public interface StudentMapper {
     List<String> getStudentNumListByStudentIdList(List<Integer> studentIdList);
 
     void saveResignNews(@Param("resignNews") ResignNews resignNews);
+
+    Integer isTwoRequestRetroactiveBySignInId(@Param("signInId") Integer signInId);
 }

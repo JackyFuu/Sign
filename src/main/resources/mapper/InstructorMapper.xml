@@ -6,9 +6,9 @@
 
 <mapper namespace="com.sign.jacky.dao.InstructorMapper">
     <resultMap id="instructorDetail" type="map">
-        <result column="teacher_name" property="name"/>
-        <result column="teacher_num" property="id"/>
-        <result column="teacher_sex" property="gender"/>
+        <result column="instructor_name" property="name"/>
+        <result column="instructor_num" property="id"/>
+        <result column="instructor_sex" property="gender"/>
         <result column="school_name" property="school"/>
     </resultMap>
     <select id="getIid" resultType="Integer">
@@ -18,14 +18,21 @@
     </select>
 
     <select id="getInstructorDetail" parameterType="int" resultMap="instructorDetail">
-        select teacher_name, teacher_num, teacher_sex, school_name
+        select instructor_name, instructor_num, instructor_sex, school_name
         from instructor i, university u
-        where teacher_id = #{allId} and i.school_id = u.school_id
+        where instructor_id = #{allId} and i.school_id = u.school_id
     </select>
 
     <select id="getMajorListByInstructorId" resultType="com.sign.jacky.entity.Profession">
         select *
         from profession
         where instructor_id = #{instructorId}
+    </select>
+    <select id="getConditionalBeLateStudentListByInstructorIdAndSearchTime"
+        resultType="com.sign.jacky.vo.BeLateStudentList">
+        select *
+        from BeLateStudentList
+        where instructor_id = #{instructorId}
+        and sponsor_time > #{searchTime}
     </select>
 </mapper>
